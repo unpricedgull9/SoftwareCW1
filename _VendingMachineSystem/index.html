@@ -9,16 +9,14 @@
   <body>
     <!-- Modal -->
     <div class="modal" hidden>
-      <div class="modal-bg">
-        <div class="modal-body menu-item">
-          <h2 id="modal-header"></h2>
-          <div id="modal-content"></div>
-          <div id="modal-btns">
-            <button id="modal-green" class="green-btn">Confirm</button>
-            <button id="modal-red" class="red-btn">Cancel</button>
-          </div>
-          <p id="modal-msg"></p>
+      <div class="modal-body menu-item">
+        <h2 id="modal-header"></h2>
+        <div id="modal-content"></div>
+        <div id="modal-btns">
+          <button id="modal-green" class="green-btn">Confirm</button>
+          <button id="modal-red" class="red-btn" hidden>Cancel</button>
         </div>
+        <p id="modal-msg" class="msg" hidden></p>
       </div>
     </div>
     <!-- Header -->
@@ -35,7 +33,24 @@
             <th>Price</th>
             <th>Stock</th>
           </tr>
+          <tr>
+            <td>001</td>
+            <td>Espresso</td>
+            <td>£1.50</td>
+            <td>10</td>
+          </tr>
         </table>
+      </div>
+      <!-- Payment Panel -->
+      <div class="menu-item" id="payment-panel">
+        <h2>Selected</h2>
+        <p id="sel-drink-id">ID: N/A</p>
+        <p id="sel-drink-name">Drink: N/A</p>
+        <p id="sel-drink-price">Price: £N/A</p>
+        <input type="number" id="input-drink-id" placeholder="Enter Drink ID" />
+        <p id="sel-msg" class="msg" hidden></p>
+        <button id="cash-btn" class="green-btn">Pay with Cash</button>
+        <button id="card-btn" class="blue-btn">Pay with Card</button>
       </div>
       <!-- Admin Panel -->
       <div class="menu-item" id="admin-panel">
@@ -45,10 +60,10 @@
           id="input-admin-pass"
           placeholder="Enter Admin PIN"
         />
-        <p id="admin-msg" hidden></p>
+        <p id="admin-msg" class="msg" hidden></p>
         <button id="admin-btn" class="yellow-btn">Submit</button>
         <div class="admin-btns" hidden>
-          <button id="restock-drink-btn" class="yellow-btn">
+          <button id="restock-drink-btn" class="blue-btn">
             Restock Drinks
           </button>
           <button id="view-log-btn" class="purple-btn">View Log</button>
@@ -57,6 +72,7 @@
         <script>
           // Password for admin panel is hardcoded as "1234" for demonstration purposes. In real application, this should be handled correctly.
           // Admin Panel
+          // May have to move into another module at the bottom or in another file to fulfil specificaton oliver - jayden
           const adminBtn = document.getElementById("admin-btn");
           const adminPassInput = document.getElementById("input-admin-pass");
           const adminMsg = document.getElementById("admin-msg");
@@ -67,24 +83,15 @@
             if (enteredPass === "1234") {
               adminMsg.hidden = true;
               adminBtns.hidden = false;
+              adminBtns.style.display = "flex";
             } else {
-              adminMsg.textContent = "Incorrect PIN. Please try again.";
+              adminMsg.textContent = "*Incorrect PIN. Please try again.";
               adminMsg.hidden = false;
               adminBtns.hidden = true;
+              adminBtns.style.display = "none";
             }
           });
         </script>
-      </div>
-      <!-- Payment Panel -->
-      <div class="menu-item" id="payment-panel">
-        <h2>Selected</h2>
-        <p id="sel-drink-id">ID: N/A</p>
-        <p id="sel-drink-name">Drink: N/A</p>
-        <p id="sel-drink-price">Price: £N/A</p>
-        <input type="number" id="input-drink-id" placeholder="Enter Drink ID" />
-        <p id="sel-msg" hidden></p>
-        <button id="cash-btn" class="green-btn">Pay with Cash</button>
-        <button id="card-btn" class="blue-btn">Pay with Card</button>
       </div>
       <!-- Loyalty Panel -->
       <div class="menu-item" id="loyalty-panel">
@@ -94,7 +101,7 @@
           id="input-loyalty-id"
           placeholder="Enter Loyalty ID"
         />
-        <p id="loyalty-msg" hidden></p>
+        <p id="loyalty-msg" class="msg" hidden></p>
         <button id="loyalty-btn" class="green-btn">Submit</button>
       </div>
     </main>
