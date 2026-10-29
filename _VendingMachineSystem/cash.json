@@ -1,0 +1,9 @@
+[
+  { "type": "£10", "worth": 10, "quantity": 5 },
+  { "type": "£5", "worth": 5, "quantity": 10 },
+  { "type": "£2", "worth": 2, "quantity": 20 },
+  { "type": "£1", "worth": 1, "quantity": 30 },
+  { "type": "50p", "worth": 0.5, "quantity": 40 },
+  { "type": "20p", "worth": 0.2, "quantity": 50 },
+  { "type": "10p", "worth": 0.1, "quantity": 60 }
+]

@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home - Edge Hill Drinks Vending Machine</title>
+  </head>
+  <body>
+    <!-- Modal -->
+    <div class="modal" hidden>
+      <div class="modal-bg">
+        <div class="modal-body menu-item">
+          <h2 id="modal-header"></h2>
+          <div id="modal-content"></div>
+          <div id="modal-btns">
+            <button id="modal-green" class="green-btn">Confirm</button>
+            <button id="modal-red" class="red-btn">Cancel</button>
+          </div>
+          <p id="modal-msg"></p>
+        </div>
+      </div>
+    </div>
+    <!-- Header -->
+    <header id="title-bar"><h1>Edge Hill Drinks Vending Machine</h1></header>
+    <!-- Main Menu -->
+    <main id="main-menu">
+      <!-- Drinks Panel -->
+      <div class="menu-item" id="drinks-panel">
+        <h2>Drinks</h2>
+        <table>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <script></script>
+        </table>
+      </div>
+      <!-- Admin Panel -->
+      <div class="menu-item" id="admin-panel">
+        <h2>Admin Panel</h2>
+        <input
+          type="password"
+          id="input-admin-pass"
+          placeholder="Enter Admin PIN"
+        />
+        <p id="admin-msg" hidden></p>
+        <button id="admin-btn" class="yellow-btn">Submit</button>
+        <div class="admin-btns" hidden>
+          <button id="restock-drink-btn" class="yellow-btn">
+            Restock Drinks
+          </button>
+          <button id="view-log-btn" class="purple-btn">View Log</button>
+          <button id="view-cash-btn" class="green-btn">View Cash</button>
+        </div>
+        <script>
+          // Password for admin panel is hardcoded as "1234" for demonstration purposes. In real application, this should be handled correctly.
+          // Admin Panel
+          const adminBtn = document.getElementById("admin-btn");
+          const adminPassInput = document.getElementById("input-admin-pass");
+          const adminMsg = document.getElementById("admin-msg");
+          const adminBtns = document.querySelector(".admin-btns");
+
+          adminBtn.addEventListener("click", () => {
+            const enteredPass = adminPassInput.value;
+            if (enteredPass === "1234") {
+              adminMsg.hidden = true;
+              adminBtns.hidden = false;
+            } else {
+              adminMsg.textContent = "Incorrect PIN. Please try again.";
+              adminMsg.hidden = false;
+              adminBtns.hidden = true;
+            }
+          });
+        </script>
+      </div>
+      <!-- Payment Panel -->
+      <div class="menu-item" id="payment-panel">
+        <h2>Selected</h2>
+        <p id="sel-drink-id">ID: N/A</p>
+        <p id="sel-drink-name">Drink: N/A</p>
+        <p id="sel-drink-price">Price: £N/A</p>
+        <input type="number" id="input-drink-id" placeholder="Enter Drink ID" />
+        <p id="sel-msg" hidden></p>
+        <button id="cash-btn" class="green-btn">Pay with Cash</button>
+        <button id="card-btn" class="blue-btn">Pay with Card</button>
+      </div>
+      <!-- Loyalty Panel -->
+      <div class="menu-item" id="loyalty-panel">
+        <h2>Loyalty Card</h2>
+        <input
+          type="text"
+          id="input-loyalty-id"
+          placeholder="Enter Loyalty ID"
+        />
+        <p id="loyalty-msg" hidden></p>
+        <button id="loyalty-btn" class="green-btn">Submit</button>
+      </div>
+    </main>
+  </body>
+</html>
+<script>
+  // Drink class represents drinks
+  class Drink {
+    constructor(id, name, price, stock) {
+      this.id = id;
+      this.name = name;
+      this.price = price;
+      this.stock = stock;
+    }
+  }
+</script>

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "000",
+    "name": "Espresso",
+    "price": 1.50,
+    "quantity": 5
+  },
+  {
+    "id": "001",
+    "name": "Latte",
+    "price": 2.20,
+    "quantity": 8
+  },
+  {
+    "id": "003",
+    "name": "Hot Chocolate",
+    "price": 2.00,
+    "quantity": 3
+  },
+  {
+    "id": "004",
+    "name": "Bottled Water",
+    "price": 1.00,
+    "quantity": 10
+  }
+]
