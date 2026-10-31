@@ -61,7 +61,13 @@
           placeholder="Enter Admin PIN"
         />
         <p id="admin-msg" class="msg" hidden></p>
-        <button id="admin-btn" class="yellow-btn">Submit</button>
+        <button
+          id="admin-btn"
+          class="yellow-btn"
+          onclick="controller.checkAdminPass()"
+        >
+          Submit
+        </button>
         <div class="admin-btns" hidden>
           <button id="restock-drink-btn" class="blue-btn">
             Restock Drinks
@@ -69,29 +75,6 @@
           <button id="view-log-btn" class="purple-btn">View Log</button>
           <button id="view-cash-btn" class="green-btn">View Cash</button>
         </div>
-        <script>
-          // Password for admin panel is hardcoded as "1234" for demonstration purposes. In real application, this should be handled correctly.
-          // Admin Panel
-          // May have to move into another module at the bottom or in another file to fulfil specificaton oliver - jayden
-          const adminBtn = document.getElementById("admin-btn");
-          const adminPassInput = document.getElementById("input-admin-pass");
-          const adminMsg = document.getElementById("admin-msg");
-          const adminBtns = document.querySelector(".admin-btns");
-
-          adminBtn.addEventListener("click", () => {
-            const enteredPass = adminPassInput.value;
-            if (enteredPass === "1234") {
-              adminMsg.hidden = true;
-              adminBtns.hidden = false;
-              adminBtns.style.display = "flex";
-            } else {
-              adminMsg.textContent = "*Incorrect PIN. Please try again.";
-              adminMsg.hidden = false;
-              adminBtns.hidden = true;
-              adminBtns.style.display = "none";
-            }
-          });
-        </script>
       </div>
       <!-- Loyalty Panel -->
       <div class="menu-item" id="loyalty-panel">
@@ -117,4 +100,61 @@
       this.stock = stock;
     }
   }
+
+  // Core Components
+
+  class VendingController {
+    // # means a var is private
+    #adminPass = "1234";
+
+    checkAdminPass() {
+      const adminPassInput = document.getElementById("input-admin-pass");
+      const adminMsg = document.getElementById("admin-msg");
+      const adminBtns = document.querySelector(".admin-btns");
+
+      const enteredPass = adminPassInput.value;
+      if (enteredPass === this.#adminPass) {
+        adminMsg.hidden = true;
+        adminBtns.hidden = false;
+        adminBtns.style.display = "flex";
+      } else {
+        adminMsg.textContent = "*Incorrect PIN. Please try again.";
+        adminMsg.hidden = false;
+        adminBtns.hidden = true;
+        adminBtns.style.display = "none";
+      }
+    }
+  }
+
+  class PaymentModule {}
+
+  class CashReceiver {}
+
+  class CardReader {}
+
+  class LoyaltyScanner {}
+
+  class BankService {}
+
+  class DrinkDispenser {}
+
+  // Optional Extension Components
+
+  class CashValidator {}
+
+  class CashSensor {}
+
+  class StockSensor {}
+
+  class WeightSensor {}
+
+  class TransactionTimer {}
+
+  class ChangeDispenser {}
+
+  class Logger {}
+
+  class TransactionRecord {}
+
+  const controller = new VendingController();
 </script>
