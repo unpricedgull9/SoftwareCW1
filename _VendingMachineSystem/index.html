@@ -91,6 +91,43 @@
   </body>
 </html>
 <script>
+  const CASH_DATA = [
+    { "type": "£10", "worth": 10, "quantity": 5 },
+    { "type": "£5", "worth": 5, "quantity": 10 },
+    { "type": "£2", "worth": 2, "quantity": 20 },
+    { "type": "£1", "worth": 1, "quantity": 30 },
+    { "type": "50p", "worth": 0.5, "quantity": 40 },
+    { "type": "20p", "worth": 0.2, "quantity": 50 },
+    { "type": "10p", "worth": 0.1, "quantity": 60 }
+  ];
+
+  const STOCK_DATA = [
+  {
+    "id": "000",
+    "name": "Espresso",
+    "price": 1.50,
+    "quantity": 5
+  },
+  {
+    "id": "001",
+    "name": "Latte",
+    "price": 2.20,
+    "quantity": 8
+  },
+  {
+    "id": "003",
+    "name": "Hot Chocolate",
+    "price": 2.00,
+    "quantity": 3
+  },
+  {
+    "id": "004",
+    "name": "Bottled Water",
+    "price": 1.00,
+    "quantity": 10
+  }
+]
+
   // Drink class
   class Drink {
     constructor(id, name, price, stock) {
@@ -104,9 +141,24 @@
   // Core Components
 
   class VendingController {
-    // # means a var is private
+    // Populates drinks array with drinks from data
+    constructor() {
+      this.drinks = []
+
+      STOCK_DATA.forEach(stockDrink => {
+        this.drinks.push(new Drink(
+          stockDrink["id"], 
+          stockDrink["name"], 
+          stockDrink["price"], 
+          stockDrink["quantity"]
+        ))
+      })
+    }
+
+    // The # means a var is private
     #adminPass = "1234";
 
+    // Handles admin password entry
     checkAdminPass() {
       const adminPassInput = document.getElementById("input-admin-pass");
       const adminMsg = document.getElementById("admin-msg");
@@ -123,6 +175,35 @@
         adminBtns.hidden = true;
         adminBtns.style.display = "none";
       }
+    }
+
+    // Handles creating and updating the drinks table with drinks from the drinks array
+    renderDrinksTable() {
+      const table = document.querySelector("#drinks-panel table");
+      if (!table) return;
+
+      let html = `
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Price</th>
+          <th>Stock</th>
+        </tr>
+      `;
+
+      this.drinks.forEach(drink => {
+        // toFixed(2) fixes price at 2 decimal places
+        html += `
+          <tr>
+            <td>${drink.id}</td>
+            <td>${drink.name}</td>
+            <td>£${drink.price.toFixed(2)}</td>
+            <td>${drink.stock}</td>
+          </tr>
+        `;
+      });
+
+      table.innerHTML = html;
     }
   }
 
@@ -157,4 +238,5 @@
   class TransactionRecord {}
 
   const controller = new VendingController();
+  controller.renderDrinksTable();
 </script>
