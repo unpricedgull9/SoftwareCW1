@@ -143,7 +143,8 @@
   class VendingController {
     // Populates drinks array with drinks from data
     constructor() {
-      this.drinks = []
+      this.drinks = [];
+      this.selectedDrink = null;
 
       STOCK_DATA.forEach(stockDrink => {
         this.drinks.push(new Drink(
@@ -151,8 +152,8 @@
           stockDrink["name"], 
           stockDrink["price"], 
           stockDrink["quantity"]
-        ))
-      })
+        ));
+      });
     }
 
     // The # means a var is private
@@ -205,6 +206,50 @@
 
       table.innerHTML = html;
     }
+
+    // Handling for selecting drinks via id
+    selectDrink(id) {
+      const msgElement = document.getElementById("sel-msg");
+      const idDisplay = document.getElementById("sel-drink-id");
+      const nameDisplay = document.getElementById("sel-drink-name");
+      const priceDisplay = document.getElementById("sel-drink-price");
+
+      // Trim whitespace from input
+      const trimmedId = id.toString().trim();
+
+      const drink = this.drinks.find(d => d.id === trimmedId);
+
+      // Handle invalid id input
+      if (!drink) {
+        msgElement.textContent = "*Error: Invalid Drink ID.";
+        msgElement.hidden = false;
+        this.clearSelectionDisplay();
+        return;
+      }
+
+      // Move this function over to StockSensor later
+      if (drink.quantity <= 0) {
+        msgElement.textContent = `*Error: ${drink.name} is out of stock.`;
+        msgElement.hidden = false;
+        this.clearSelectionDisplay();
+        return;
+      }
+
+      this.selectedDrink = drink;
+      msgElement.hidden = true;
+
+      idDisplay.textContent = `ID: ${drink.id}`;
+      nameDisplay.textContent = `Drink: ${drink.name}`;
+      priceDisplay.textContent = `Price: £${drink.price.toFixed(2)}`;
+    }
+
+    // Clears the drink selection
+    clearSelectionDisplay() {
+      this.selectedDrink = null;
+      document.getElementById("sel-drink-id").textContent = "ID: N/A";
+      document.getElementById("sel-drink-name").textContent = "Drink: N/A";
+      document.getElementById("sel-drink-price").textContent = "Price: £N/A";
+    }
   }
 
   class PaymentModule {}
@@ -238,5 +283,10 @@
   class TransactionRecord {}
 
   const controller = new VendingController();
+
   controller.renderDrinksTable();
+
+  document.getElementById("input-drink-id").addEventListener("change", (e) => {
+    controller.selectDrink(e.target.value);
+  });
 </script>
