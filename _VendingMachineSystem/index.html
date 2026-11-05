@@ -105,8 +105,8 @@
       const STOCK_DATA = [
         { id: "000", name: "Espresso", price: 1.5, stock: 5 },
         { id: "001", name: "Latte", price: 2.2, stock: 8 },
-        { id: "003", name: "Hot Chocolate", price: 2.0, stock: 3 },
-        { id: "004", name: "Bottled Water", price: 1.0, stock: 10 },
+        { id: "002", name: "Hot Chocolate", price: 2.0, stock: 3 },
+        { id: "003", name: "Bottled Water", price: 1.0, stock: 10 },
       ];
 
       const LOYALTY_DATA = [
@@ -310,6 +310,8 @@
           const modalHeader = document.getElementById("modal-header");
           const modalContent = document.getElementById("modal-content");
           const modalCancelBtn = document.getElementById("modal-red");
+          const modalConfirmBtn = document.getElementById("modal-green");
+          const modalMsg = document.getElementById("modal-msg");
 
           modalHeader.textContent = header;
           modalContent.innerHTML = content;
@@ -321,22 +323,33 @@
         static hide() {
           const modal = document.querySelector(".modal");
           modal.hidden = true;
+          modalConfirmBtn.disabled = false; // Re-enable confirm button for next use
         }
 
         static confirmFunction(callback) {
           const confirmBtn = document.getElementById("modal-green");
           confirmBtn.onclick = () => {
             callback();
-            this.hide();
           };
+        }
+
+        static message(message) {
+          const modalMsg = document.getElementById("modal-msg");
+          modalMsg.textContent = message;
+          modalMsg.hidden = false;
+        }
+
+        static hideMessage() {
+          const modalMsg = document.getElementById("modal-msg");
+          modalMsg.hidden = true;
         }
       }
 
       class CashReceiver {
-        static #totalInserted = 0.00;
+        static #totalInserted = 0.0;
         static #cash = [];
         static callModal() {
-          this.#totalInserted = 0.00;
+          this.#totalInserted = 0.0;
           this.#cash = [];
           let totalPrice = PaymentModule.currentPrice;
           const cashHTML = `
@@ -360,14 +373,14 @@
                   <p id="cash-total">£0.00 / £${totalPrice.toFixed(2)}</p>
             </div>
               `;
-            const confirmBtn = document.getElementById("modal-green");
-            confirmBtn.disabled = true; // Disable confirm button initially
-            Modal.confirmFunction(() => {
-              // Handle cash payment logic here
-              console.log("Cash payment confirmed.");
-            });
+          const confirmBtn = document.getElementById("modal-green");
+          confirmBtn.disabled = true; // Disable confirm button initially
+          Modal.confirmFunction(() => {
+            // Handle cash payment logic here
+            console.log("Cash payment confirmed.");
+            Modal.hide();
+          });
           Modal.show("Pay with Cash", cashHTML, true);
-
         }
 
         static insertCash(value) {
@@ -376,7 +389,9 @@
           this.#cash.push(value.toString());
           if (this.#totalInserted >= PaymentModule.currentPrice) {
             const confirmBtn = document.getElementById("modal-green");
-            const btns = document.querySelectorAll(".cash-note-btn, .cash-coin-btn");
+            const btns = document.querySelectorAll(
+              ".cash-note-btn, .cash-coin-btn",
+            );
             btns.forEach((btn) => {
               btn.disabled = true;
             });
@@ -402,10 +417,31 @@
             <input type="text" id="card-number" placeholder="Enter Card Number" style="margin-bottom: 1rem;" />
             <input type="password" id="card-pin" placeholder="Enter PIN" />
           `;
+
           Modal.confirmFunction(() => {
             // Handle card payment logic here
-            console.log("Card payment confirmed.");
+            const cardNumber = document.getElementById("card-number").value;
+            const cardPin = document.getElementById("card-pin").value;
+
+            if (
+              BankService.processCardPayment(
+                cardNumber,
+                cardPin,
+                PaymentModule.currentPrice,
+              )
+            ) {
+              console.log("Card payment successful.");
+              Modal.hide();
+              Modal.hideMessage();
+
+              Modal.show(
+                "Payment Successful",
+                "<p>Thank you for your purchase!</p>",
+                false,
+              );
+            }
           });
+
           Modal.show("Pay with Card", cardHTML, true);
         }
       }
@@ -451,7 +487,27 @@
         }
       }
 
-      class BankService {}
+      class BankService {
+        static #SAVED_CARDS = [
+          { number: "1234567890", pin: "1234" },
+          { number: "0987654321", pin: "4321" },
+        ];
+        static processCardPayment(cardNumber, cardPin, amount) {
+          // Simulate card payment processing
+          console.log(`Processing card payment for £${amount.toFixed(2)}`);
+          const card = this.#SAVED_CARDS.find(
+            (c) => c.number === cardNumber && c.pin === cardPin,
+          );
+
+          if (!card) {
+            Modal.message("*Invalid card number or PIN.");
+            return false;
+          } else {
+            console.log("Card payment successful.");
+            return true; // Simulate successful payment
+          }
+        }
+      }
 
       class DrinkDispenser {}
 
