@@ -1,285 +1,273 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="stylesheet" href="style.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home - Edge Hill Drinks Vending Machine</title>
-  </head>
-  <body>
-    <!-- Modal -->
-    <div class="modal" hidden>
-      <div class="modal-body menu-item">
-        <h2 id="modal-header"></h2>
-        <div id="modal-content"></div>
-        <div id="modal-btns">
-          <button
-            id="modal-green"
-            class="green-btn"
-            style="margin-bottom: 1rem"
-          >
-            Confirm
-          </button>
-          <button id="modal-red" class="red-btn" onclick="Modal.hide()" hidden>
-            Cancel
-          </button>
-        </div>
-        <p id="modal-msg" class="msg" hidden></p>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home - Edge Hill Drinks Vending Machine</title>
+</head>
+
+<body>
+  <!-- Modal -->
+  <div class="modal" hidden>
+    <div class="modal-body menu-item">
+      <h2 id="modal-header"></h2>
+      <div id="modal-content"></div>
+      <div id="modal-btns">
+        <button id="modal-green" class="green-btn" style="margin-bottom: 1rem">
+          Confirm
+        </button>
+        <button id="modal-red" class="red-btn" onclick="Modal.hide()" hidden>
+          Cancel
+        </button>
+      </div>
+      <p id="modal-msg" class="msg" hidden></p>
+    </div>
+  </div>
+  <!-- Header -->
+  <header id="title-bar">
+    <h1>Edge Hill Drinks Vending Machine</h1>
+  </header>
+  <!-- Main Menu -->
+  <main id="main-menu">
+    <!-- Drinks Panel -->
+    <div class="menu-item" id="drinks-panel">
+      <h2>Drinks</h2>
+      <table>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Price</th>
+          <th>Stock</th>
+        </tr>
+      </table>
+    </div>
+    <!-- Payment Panel -->
+    <div class="menu-item" id="payment-panel">
+      <h2>Selected</h2>
+      <p id="sel-drink-id">ID: N/A</p>
+      <p id="sel-drink-name">Drink: N/A</p>
+      <p id="sel-drink-price">Price: £N/A</p>
+      <input type="number" id="input-drink-id" placeholder="Enter Drink ID" />
+      <p id="sel-msg" class="msg" hidden></p>
+      <button id="cash-btn" class="green-btn">Pay with Cash</button>
+      <button id="card-btn" class="blue-btn">Pay with Card</button>
+    </div>
+    <!-- Admin Panel -->
+    <div class="menu-item" id="admin-panel">
+      <h2>Admin Panel</h2>
+      <input type="password" id="input-admin-pass" placeholder="Enter Admin PIN" />
+      <p id="admin-msg" class="msg" hidden></p>
+      <button id="admin-btn" class="yellow-btn" onclick="controller.checkAdminPass()">
+        Submit
+      </button>
+      <div class="admin-btns" hidden>
+        <button id="restock-drink-btn" class="blue-btn">
+          Restock Drinks
+        </button>
+        <button id="view-log-btn" class="purple-btn">View Log</button>
+        <button id="view-cash-btn" class="green-btn">View Cash</button>
       </div>
     </div>
-    <!-- Header -->
-    <header id="title-bar"><h1>Edge Hill Drinks Vending Machine</h1></header>
-    <!-- Main Menu -->
-    <main id="main-menu">
-      <!-- Drinks Panel -->
-      <div class="menu-item" id="drinks-panel">
-        <h2>Drinks</h2>
-        <table>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Stock</th>
-          </tr>
-        </table>
-      </div>
-      <!-- Payment Panel -->
-      <div class="menu-item" id="payment-panel">
-        <h2>Selected</h2>
-        <p id="sel-drink-id">ID: N/A</p>
-        <p id="sel-drink-name">Drink: N/A</p>
-        <p id="sel-drink-price">Price: £N/A</p>
-        <input type="number" id="input-drink-id" placeholder="Enter Drink ID" />
-        <p id="sel-msg" class="msg" hidden></p>
-        <button id="cash-btn" class="green-btn">Pay with Cash</button>
-        <button id="card-btn" class="blue-btn">Pay with Card</button>
-      </div>
-      <!-- Admin Panel -->
-      <div class="menu-item" id="admin-panel">
-        <h2>Admin Panel</h2>
-        <input
-          type="password"
-          id="input-admin-pass"
-          placeholder="Enter Admin PIN"
-        />
-        <p id="admin-msg" class="msg" hidden></p>
-        <button
-          id="admin-btn"
-          class="yellow-btn"
-          onclick="controller.checkAdminPass()"
-        >
-          Submit
-        </button>
-        <div class="admin-btns" hidden>
-          <button id="restock-drink-btn" class="blue-btn">
-            Restock Drinks
-          </button>
-          <button id="view-log-btn" class="purple-btn">View Log</button>
-          <button id="view-cash-btn" class="green-btn">View Cash</button>
-        </div>
-      </div>
-      <!-- Loyalty Panel -->
-      <div class="menu-item" id="loyalty-panel">
-        <h2>Loyalty Card</h2>
-        <input
-          type="text"
-          id="input-loyalty-id"
-          placeholder="Enter Loyalty ID"
-        />
-        <p id="loyalty-msg" class="msg" hidden></p>
-        <button id="loyalty-btn" class="green-btn">Submit</button>
-      </div>
-    </main>
+    <!-- Loyalty Panel -->
+    <div class="menu-item" id="loyalty-panel">
+      <h2>Loyalty Card</h2>
+      <input type="text" id="input-loyalty-id" placeholder="Enter Loyalty ID" />
+      <p id="loyalty-msg" class="msg" hidden></p>
+      <button id="loyalty-btn" class="green-btn">Submit</button>
+    </div>
+  </main>
 
-    <script>
-      // Drink class
-      class Drink {
-        #id;
-        #name;
-        #price;
-        #stock;
+  <script>
+    // Drink class
+    class Drink {
+      #id;
+      #name;
+      #price;
+      #stock;
 
-        constructor(id, name, price, stock) {
-          this.#id = id;
-          this.#name = name;
-          this.#price = price;
-          this.#stock = stock;
+      constructor(id, name, price, stock) {
+        this.#id = id;
+        this.#name = name;
+        this.#price = price;
+        this.#stock = stock;
+      }
+
+      get id() {
+        return this.#id;
+      }
+      get name() {
+        return this.#name;
+      }
+      get price() {
+        return this.#price;
+      }
+      get stock() {
+        return this.#stock;
+      }
+    }
+
+    class StockSensor {
+      static #STOCK_DATA = [
+        { id: "000", name: "Espresso", price: 1.5, weight: 150, stock: 0 },
+        { id: "001", name: "Latte", price: 2.2, weight: 250, stock: 0 },
+        {
+          id: "002",
+          name: "Hot Chocolate",
+          price: 2.0,
+          weight: 300,
+          stock: 0,
+        },
+        {
+          id: "003",
+          name: "Bottled Water",
+          price: 1.0,
+          weight: 500,
+          stock: 0,
+        },
+      ];
+
+      // returns the stock data with updated stock values based on the simulated weight sensor
+      static getStock() {
+        const realStockData = WeightSensor.getRealStock();
+        const updatedStockList = [];
+
+        for (const drink of this.#STOCK_DATA) {
+          // match the drink with the real stock data
+          const match = realStockData.find((item) => item.id === drink.id);
+          const currentStock = match ? match.realStock : 0;
+
+          // create a new object with the updated stock value
+          const drinkWithStock = {
+            id: drink.id,
+            name: drink.name,
+            price: drink.price,
+            stock: currentStock,
+          };
+
+          // add the object to the updated stock list
+          updatedStockList.push(drinkWithStock);
         }
 
-        get id() {
-          return this.#id;
+        return updatedStockList;
+      }
+
+      // replaces the stock value with the new one from the simulated weight sensor
+      static updateStock(drinkId, newStock) {
+        const drink = this.#STOCK_DATA.find((d) => d.id === drinkId);
+        // if the drink is found, update its stock value
+        if (drink) {
+          drink.stock = newStock;
         }
-        get name() {
-          return this.#name;
-        }
-        get price() {
-          return this.#price;
-        }
-        get stock() {
-          return this.#stock;
+      }
+    }
+
+    // Core Components
+    class VendingController {
+      #adminPass = "1234";
+
+      constructor() {
+        this.drinks = [];
+        this.selectedDrink = null;
+
+        StockSensor.getStock().forEach((stockDrink) => {
+          this.drinks.push(
+            new Drink(
+              stockDrink["id"],
+              stockDrink["name"],
+              stockDrink["price"],
+              stockDrink["stock"],
+            ),
+          );
+        });
+      }
+
+      // Handles admin password entry
+      checkAdminPass() {
+        const adminPassInput = document.getElementById("input-admin-pass");
+        const adminPassBtn = document.getElementById("admin-btn");
+        const adminMsg = document.getElementById("admin-msg");
+        const adminBtns = document.querySelector(".admin-btns");
+
+        const enteredPass = adminPassInput.value;
+        if (enteredPass === this.#adminPass) {
+          adminMsg.hidden = true;
+          adminBtns.hidden = false;
+          adminBtns.style.display = "flex";
+          adminPassInput.hidden = true;
+          adminPassBtn.hidden = true;
+        } else {
+          adminMsg.textContent = "*Incorrect PIN. Please try again.";
+          adminMsg.hidden = false;
+          adminBtns.hidden = true;
+          adminBtns.style.display = "none";
         }
       }
 
-      class StockSensor {
-        static #STOCK_DATA = [
-          { id: "000", name: "Espresso", price: 1.5, weight: 150, stock: 0 },
-          { id: "001", name: "Latte", price: 2.2, weight: 250, stock: 0 },
-          {
-            id: "002",
-            name: "Hot Chocolate",
-            price: 2.0,
-            weight: 300,
-            stock: 0,
-          },
-          {
-            id: "003",
-            name: "Bottled Water",
-            price: 1.0,
-            weight: 500,
-            stock: 0,
-          },
-        ];
+      // Handling for selecting drinks via id
+      selectDrink(id) {
+        const msgElement = document.getElementById("sel-msg");
+        const trimmedId = id.toString().trim();
 
-        // returns the stock data with updated stock values based on the simulated weight sensor
-        static getStock() {
-          const realStockData = WeightSensor.getRealStock();
-          const updatedStockList = [];
-
-          for (const drink of this.#STOCK_DATA) {
-            // match the drink with the real stock data
-            const match = realStockData.find((item) => item.id === drink.id);
-            const currentStock = match ? match.realStock : 0;
-
-            // create a new object with the updated stock value
-            const drinkWithStock = {
-              id: drink.id,
-              name: drink.name,
-              price: drink.price,
-              stock: currentStock,
-            };
-
-            // add the object to the updated stock list
-            updatedStockList.push(drinkWithStock);
-          }
-
-          return updatedStockList;
-        }
-
-        // replaces the stock value with the new one from the simulated weight sensor
-        static updateStock(drinkId, newStock) {
-          const drink = this.#STOCK_DATA.find((d) => d.id === drinkId);
-          // if the drink is found, update its stock value
-          if (drink) {
-            drink.stock = newStock;
-          }
-        }
-      }
-
-      // Core Components
-      class VendingController {
-        #adminPass = "1234";
-
-        constructor() {
-          this.drinks = [];
-          this.selectedDrink = null;
-
-          StockSensor.getStock().forEach((stockDrink) => {
-            this.drinks.push(
-              new Drink(
-                stockDrink["id"],
-                stockDrink["name"],
-                stockDrink["price"],
-                stockDrink["stock"],
-              ),
-            );
-          });
-        }
-
-        // Handles admin password entry
-        checkAdminPass() {
-          const adminPassInput = document.getElementById("input-admin-pass");
-          const adminPassBtn = document.getElementById("admin-btn");
-          const adminMsg = document.getElementById("admin-msg");
-          const adminBtns = document.querySelector(".admin-btns");
-
-          const enteredPass = adminPassInput.value;
-          if (enteredPass === this.#adminPass) {
-            adminMsg.hidden = true;
-            adminBtns.hidden = false;
-            adminBtns.style.display = "flex";
-            adminPassInput.hidden = true;
-            adminPassBtn.hidden = true;
-          } else {
-            adminMsg.textContent = "*Incorrect PIN. Please try again.";
-            adminMsg.hidden = false;
-            adminBtns.hidden = true;
-            adminBtns.style.display = "none";
-          }
-        }
-
-        // Handling for selecting drinks via id
-        selectDrink(id) {
-          const msgElement = document.getElementById("sel-msg");
-          const trimmedId = id.toString().trim();
-
-          if (trimmedId.length < 3) {
-            msgElement.hidden = true;
-            this.clearSelectionDisplay();
-            return;
-          }
-
-          const drink = this.drinks.find((d) => d.id === trimmedId);
-
-          if (!drink) {
-            msgElement.textContent = "*Error: Invalid Drink ID.";
-            msgElement.hidden = false;
-            this.clearSelectionDisplay();
-            return;
-          }
-
-          if (drink.stock <= 0) {
-            msgElement.textContent = `*Error: ${drink.name} is out of stock.`;
-            msgElement.hidden = false;
-            this.clearSelectionDisplay();
-            return;
-          }
-
-          this.selectedDrink = drink;
+        if (trimmedId.length < 3) {
           msgElement.hidden = true;
-
-          PaymentModule.currentPrice = drink.price;
-          if (LoyaltyScanner.loyaltyStatus) {
-            PaymentModule.currentPrice = PaymentModule.applyLoyaltyDiscount(
-              drink.price,
-            );
-          }
-          PaymentModule.updatePaymentDisplay(drink.id, drink.name);
+          this.clearSelectionDisplay();
+          return;
         }
 
-        // Clears the drink selection
-        clearSelectionDisplay() {
-          this.selectedDrink = null;
-          PaymentModule.currentPrice = 0;
-          document.getElementById("sel-drink-id").textContent = "ID: N/A";
-          document.getElementById("sel-drink-name").textContent = "Drink: N/A";
-          document.getElementById("sel-drink-price").textContent =
-            "Price: £N/A";
+        const drink = this.drinks.find((d) => d.id === trimmedId);
+
+        if (!drink) {
+          msgElement.textContent = "*Error: Invalid Drink ID.";
+          msgElement.hidden = false;
+          this.clearSelectionDisplay();
+          return;
         }
 
-        static updateSelectionMessage(message) {
-          const msgElement = document.getElementById("sel-msg");
-          if (msgElement) {
-            msgElement.textContent = message;
-            msgElement.hidden = false;
-          }
+        if (drink.stock <= 0) {
+          msgElement.textContent = `*Error: ${drink.name} is out of stock.`;
+          msgElement.hidden = false;
+          this.clearSelectionDisplay();
+          return;
         }
 
-        // Handles creating and updating the drinks table
-        renderDrinksTable() {
-          const table = document.querySelector("#drinks-panel table");
-          if (!table) return;
+        this.selectedDrink = drink;
+        msgElement.hidden = true;
 
-          let html = `
+        PaymentModule.currentPrice = drink.price;
+        if (LoyaltyScanner.loyaltyStatus) {
+          PaymentModule.currentPrice = PaymentModule.applyLoyaltyDiscount(
+            drink.price,
+          );
+        }
+        PaymentModule.updatePaymentDisplay(drink.id, drink.name);
+      }
+
+      // Clears the drink selection
+      clearSelectionDisplay() {
+        this.selectedDrink = null;
+        PaymentModule.currentPrice = 0;
+        document.getElementById("sel-drink-id").textContent = "ID: N/A";
+        document.getElementById("sel-drink-name").textContent = "Drink: N/A";
+        document.getElementById("sel-drink-price").textContent =
+          "Price: £N/A";
+      }
+
+      static updateSelectionMessage(message) {
+        const msgElement = document.getElementById("sel-msg");
+        if (msgElement) {
+          msgElement.textContent = message;
+          msgElement.hidden = false;
+        }
+      }
+
+      // Handles creating and updating the drinks table
+      renderDrinksTable() {
+        const table = document.querySelector("#drinks-panel table");
+        if (!table) return;
+
+        let html = `
             <tr>
               <th>ID</th>
               <th>Name</th>
@@ -288,8 +276,8 @@
             </tr>
           `;
 
-          this.drinks.forEach((drink) => {
-            html += `
+        this.drinks.forEach((drink) => {
+          html += `
               <tr>
                 <td>${drink.id}</td>
                 <td>${drink.name}</td>
@@ -297,95 +285,95 @@
                 <td>${drink.stock}</td>
               </tr>
             `;
-          });
+        });
 
-          table.innerHTML = html;
-        }
+        table.innerHTML = html;
+      }
+    }
+
+    class PaymentModule {
+      static currentPrice = 0;
+
+      static applyLoyaltyDiscount(price) {
+        const discountRate = 0.1; // 10% discount
+        return price - price * discountRate;
       }
 
-      class PaymentModule {
-        static currentPrice = 0;
+      static updatePaymentDisplay(drinkID, drinkName) {
+        const idDisplay = document.getElementById("sel-drink-id");
+        const nameDisplay = document.getElementById("sel-drink-name");
+        const priceDisplay = document.getElementById("sel-drink-price");
 
-        static applyLoyaltyDiscount(price) {
-          const discountRate = 0.1; // 10% discount
-          return price - price * discountRate;
+        if (this.currentPrice > 0) {
+          priceDisplay.innerHTML =
+            `Price: £${this.currentPrice.toFixed(2)}` +
+            (LoyaltyScanner.getLoyaltyStatus()
+              ? "<b style='color: green;'> -10%</b>"
+              : "");
+        } else {
+          priceDisplay.textContent = "Price: £N/A";
         }
 
-        static updatePaymentDisplay(drinkID, drinkName) {
-          const idDisplay = document.getElementById("sel-drink-id");
-          const nameDisplay = document.getElementById("sel-drink-name");
-          const priceDisplay = document.getElementById("sel-drink-price");
-
-          if (this.currentPrice > 0) {
-            priceDisplay.innerHTML =
-              `Price: £${this.currentPrice.toFixed(2)}` +
-              (LoyaltyScanner.getLoyaltyStatus()
-                ? "<b style='color: green;'> -10%</b>"
-                : "");
-          } else {
-            priceDisplay.textContent = "Price: £N/A";
-          }
-
-          if (drinkID && drinkName) {
-            idDisplay.textContent = `ID: ${drinkID}`;
-            nameDisplay.textContent = `Drink: ${drinkName}`;
-          } else {
-            idDisplay.textContent = "ID: N/A";
-            nameDisplay.textContent = "Drink: N/A";
-          }
+        if (drinkID && drinkName) {
+          idDisplay.textContent = `ID: ${drinkID}`;
+          nameDisplay.textContent = `Drink: ${drinkName}`;
+        } else {
+          idDisplay.textContent = "ID: N/A";
+          nameDisplay.textContent = "Drink: N/A";
         }
       }
+    }
 
-      class Modal {
-        static show(header, content, showCancel = false) {
-          const modal = document.querySelector(".modal");
-          const modalHeader = document.getElementById("modal-header");
-          const modalContent = document.getElementById("modal-content");
-          const modalCancelBtn = document.getElementById("modal-red");
-          const modalConfirmBtn = document.getElementById("modal-green");
-          const modalMsg = document.getElementById("modal-msg");
+    class Modal {
+      static show(header, content, showCancel = false) {
+        const modal = document.querySelector(".modal");
+        const modalHeader = document.getElementById("modal-header");
+        const modalContent = document.getElementById("modal-content");
+        const modalCancelBtn = document.getElementById("modal-red");
+        const modalConfirmBtn = document.getElementById("modal-green");
+        const modalMsg = document.getElementById("modal-msg");
 
-          modalHeader.textContent = header;
-          modalContent.innerHTML = content;
-          modalCancelBtn.hidden = !showCancel;
+        modalHeader.textContent = header;
+        modalContent.innerHTML = content;
+        modalCancelBtn.hidden = !showCancel;
 
-          modal.hidden = false;
-        }
-
-        static hide() {
-          const modal = document.querySelector(".modal");
-          const modalConfirmBtn = document.getElementById("modal-green");
-          modal.hidden = true;
-          modalConfirmBtn.disabled = false;
-        }
-
-        static confirmFunction(callback) {
-          const confirmBtn = document.getElementById("modal-green");
-          confirmBtn.onclick = () => {
-            callback();
-          };
-        }
-
-        static message(message) {
-          const modalMsg = document.getElementById("modal-msg");
-          modalMsg.textContent = message;
-          modalMsg.hidden = false;
-        }
-
-        static hideMessage() {
-          const modalMsg = document.getElementById("modal-msg");
-          modalMsg.hidden = true;
-        }
+        modal.hidden = false;
+      }
+      
+      static hide() {
+        const modal = document.querySelector(".modal");
+        const modalConfirmBtn = document.getElementById("modal-green");
+        modal.hidden = true;
+        modalConfirmBtn.disabled = false; 
       }
 
-      class CashReceiver {
-        static #totalInserted = 0.0;
-        static #cash = [];
-        static callModal() {
-          this.#totalInserted = 0.0;
-          this.#cash = [];
-          let totalPrice = PaymentModule.currentPrice;
-          const cashHTML = `
+      static confirmFunction(callback) {
+        const confirmBtn = document.getElementById("modal-green");
+        confirmBtn.onclick = () => {
+          callback();
+        };
+      }
+
+      static message(message) {
+        const modalMsg = document.getElementById("modal-msg");
+        modalMsg.textContent = message;
+        modalMsg.hidden = false;
+      }
+
+      static hideMessage() {
+        const modalMsg = document.getElementById("modal-msg");
+        modalMsg.hidden = true;
+      }
+    }
+
+    class CashReceiver {
+      static #totalInserted = 0.0;
+      static #cash = [];
+      static callModal() {
+        this.#totalInserted = 0.0;
+        this.#cash = [];
+        let totalPrice = PaymentModule.currentPrice;
+        const cashHTML = `
             <div class="cash-container">
                 <div class="row">
                   <button class="cash-note-btn tenner" onclick="CashReceiver.insertCash(10)">£10</button>
@@ -407,317 +395,316 @@
                   <p id="cash-total">£0.00 / £${totalPrice.toFixed(2)}</p>
             </div>
               `;
-          const confirmBtn = document.getElementById("modal-green");
-          confirmBtn.disabled = true;
-          Modal.confirmFunction(() => {
-            console.log("Cash payment confirmed.");
-            Modal.hide();
-          });
-          Modal.show("Pay with Cash", cashHTML, true);
-        }
+        const confirmBtn = document.getElementById("modal-green");
+        confirmBtn.disabled = true;
+        Modal.confirmFunction(() => {
+          console.log("Cash payment confirmed.");
+          Modal.hide();
+        });
+        Modal.show("Pay with Cash", cashHTML, true);
+      }
 
-        static insertCash(value, type = "real") {
-          if (CashValidator.checkCashValidity(value, type)) {
-            this.#totalInserted += value;
-            this.updateCashTotal(
-              this.#totalInserted,
-              PaymentModule.currentPrice,
+      static insertCash(value, type = "real") {
+        if (CashValidator.checkCashValidity(value, type)) {
+          this.#totalInserted += value;
+          this.updateCashTotal(
+            this.#totalInserted,
+            PaymentModule.currentPrice,
+          );
+          this.#cash.push(value.toString());
+          if (this.#totalInserted >= PaymentModule.currentPrice) {
+            const confirmBtn = document.getElementById("modal-green");
+            const btns = document.querySelectorAll(
+              ".cash-note-btn, .cash-coin-btn",
             );
-            this.#cash.push(value.toString());
-            if (this.#totalInserted >= PaymentModule.currentPrice) {
-              const confirmBtn = document.getElementById("modal-green");
-              const btns = document.querySelectorAll(
-                ".cash-note-btn, .cash-coin-btn",
-              );
-              btns.forEach((btn) => {
-                btn.disabled = true;
-              });
-              if (confirmBtn) {
-                confirmBtn.disabled = false;
-              }
+            btns.forEach((btn) => {
+              btn.disabled = true;
+            });
+            if (confirmBtn) {
+              confirmBtn.disabled = false;
             }
-          } else {
-            Modal.message("*Error: Invalid cash inserted.");
           }
-        }
-
-        static updateCashTotal(totalInserted, totalPrice) {
-          const cashTotalElement = document.getElementById("cash-total");
-          if (cashTotalElement) {
-            cashTotalElement.textContent = `£${totalInserted.toFixed(
-              2,
-            )} / £${totalPrice.toFixed(2)}`;
-          }
+        } else {
+          Modal.message("*Error: Invalid cash inserted.");
         }
       }
 
-      class CardReader {
-        static callModal() {
-          const cardHTML = `
+      static updateCashTotal(totalInserted, totalPrice) {
+        const cashTotalElement = document.getElementById("cash-total");
+        if (cashTotalElement) {
+          cashTotalElement.textContent = `£${totalInserted.toFixed(
+            2,
+          )} / £${totalPrice.toFixed(2)}`;
+        }
+      }
+    }
+
+    class CardReader {
+      static callModal() {
+        const cardHTML = `
             <input type="text" id="card-number" placeholder="Enter Card Number" style="margin-bottom: 1rem;" />
             <input type="password" id="card-pin" placeholder="Enter PIN" />
           `;
 
-          Modal.confirmFunction(() => {
-            const cardNumber = document.getElementById("card-number").value;
-            const cardPin = document.getElementById("card-pin").value;
+        Modal.confirmFunction(() => {
+          const cardNumber = document.getElementById("card-number").value;
+          const cardPin = document.getElementById("card-pin").value;
 
-            if (
-              BankService.processCardPayment(
-                cardNumber,
-                cardPin,
-                PaymentModule.currentPrice,
-              )
-            ) {
-              Modal.hide();
-              Modal.hideMessage();
-              
+          if (
+            BankService.processCardPayment(
+              cardNumber,
+              cardPin,
+              PaymentModule.currentPrice,
+            )
+          ) {
+            Modal.hide();
+            Modal.hideMessage();
 
-              Modal.show(
-                "Payment Successful",
-                "<p>Thank you for your purchase!</p>",
-                false,
-              );
-              Modal.confirmFunction()
-            }
-          });
 
-          Modal.show("Pay with Card", cardHTML, true);
-        }
-      }
-
-      class LoyaltyScanner {
-        static loyaltyStatus = false;
-        static #LOYALTY_DATA = [
-          { id: "000", name: "John Smith", code: "ABC123" },
-          { id: "001", name: "Jane Smith", code: "XYZ789" },
-          { id: "002", name: "Bob Johnson", code: "DEF456" },
-        ];
-
-        static checkLoyaltyId() {
-          const loyaltyIdInput = document.getElementById("input-loyalty-id");
-          const loyaltyMsg = document.getElementById("loyalty-msg");
-          const enteredId = loyaltyIdInput.value.trim();
-
-          const loyaltyData = this.#LOYALTY_DATA.find(
-            (loyalty) => loyalty.id === enteredId || loyalty.code === enteredId,
-          );
-
-          if (loyaltyData) {
-            loyaltyMsg.textContent = `Welcome, ${loyaltyData.name}! (10% Discount Applied)`;
-            loyaltyMsg.hidden = false;
-            this.loyaltyStatus = true;
-
-            if (controller.selectedDrink) {
-              const basePrice = controller.selectedDrink.price;
-              PaymentModule.currentPrice = this.applyLoyaltyDiscount(basePrice);
-              PaymentModule.updatePaymentDisplay(
-                controller.selectedDrink.id,
-                controller.selectedDrink.name,
-              );
-            }
-          } else {
-            loyaltyMsg.textContent = "*Error: Invalid Loyalty ID.";
-            loyaltyMsg.hidden = false;
-            this.loyaltyStatus = false;
-          }
-        }
-
-        static applyLoyaltyDiscount(price) {
-          return price * 0.9;
-        }
-
-        static getLoyaltyStatus() {
-          return this.loyaltyStatus;
-        }
-      }
-
-      class BankService {
-        static #SAVED_CARDS = [
-          { number: "1234567890", pin: "1234" },
-          { number: "0987654321", pin: "4321" },
-        ];
-        static processCardPayment(cardNumber, cardPin, amount) {
-          console.log(`Processing card payment for £${amount.toFixed(2)}`);
-          const card = this.#SAVED_CARDS.find(
-            (c) => c.number === cardNumber && c.pin === cardPin,
-          );
-
-          if (!card) {
-            Modal.message("*Invalid card number or PIN.");
-            return false;
-          } else {
-            console.log("Card payment successful.");
-            return true;
-          }
-        }
-      }
-
-      class DrinkDispenser {}
-      class CashValidator {
-        static validCash = [10, 5, 2, 1, 0.5, 0.2, 0.1];
-        static checkCashValidity(value, type) {
-          if (type === "real" && this.validCash.includes(value)) {
-            return true;
-          } else {
-            ChangeDispenser.dispenseCash("rejected", value);
-            return false;
-          }
-        }
-      }
-      class CashSensor {
-        static #CASH_DATA = [
-          { type: "£10", worth: 10, stock: 5 },
-          { type: "£5", worth: 5, stock: 10 },
-          { type: "£2", worth: 2, stock: 20 },
-          { type: "£1", worth: 1, stock: 30 },
-          { type: "50p", worth: 0.5, stock: 40 },
-          { type: "20p", worth: 0.2, stock: 50 },
-          { type: "10p", worth: 0.1, stock: 60 },
-        ];
-        cash_data = [
-        ]; 
-        
-
-        getCashData(){
-          return this.cash_data;
-        }
-      }
-
-      class WeightSensor {
-        static #WEIGHT_DATA = [
-          {
-            id: "000",
-            name: "Espresso",
-            weight: 3300,
-            fakeStock: 22,
-            individualWeight: 150,
-          },
-          {
-            id: "001",
-            name: "Latte",
-            weight: 3500,
-            fakeStock: 10,
-            individualWeight: 350,
-          },
-          {
-            id: "002",
-            name: "Hot Chocolate",
-            weight: 5250,
-            fakeStock: 15,
-            individualWeight: 350,
-          },
-          {
-            id: "003",
-            name: "Bottled Water",
-            weight: 10000,
-            fakeStock: 20,
-            individualWeight: 500,
-          },
-        ];
-        static #totalWeights = [];
-
-        // Calculate real stock based on weight data
-        static calculateRealStock() {
-          this.#totalWeights = this.#WEIGHT_DATA.map((drink) => {
-            const realStock = Math.floor(drink.weight / drink.individualWeight);
-            console.log(
-              `Drink: ${drink.name}, Weight: ${drink.weight}g, Real Stock: ${realStock}`,
-            );
-            return { id: drink.id, name: drink.name, realStock };
-          });
-        }
-
-        static getRealStock() {
-          this.calculateRealStock();
-          return this.#totalWeights;
-        }
-
-        static getDrinkWeight(drinkId) {
-          const drink = this.#WEIGHT_DATA.find((d) => d.id === drinkId);
-          return drink ? drink.weight : null;
-        }
-
-        static getDrinkIndividualWeight(drinkId) {
-          const drink = this.#WEIGHT_DATA.find((d) => d.id === drinkId);
-          return drink ? drink.individualWeight : null;
-        }
-      }
-      class TransactionTimer {}
-      class ChangeDispenser {
-        static dispenseCash(type, value) {
-          if (type === "change") {
-            this.calculateChange();
-            console.log(`Dispensing change: £${value.toFixed(2)}`);
-          } else if (type === "rejected") {
             Modal.show(
-              "Invalid Cash",
-              `<div class="modal-terminal">The cash you inserted (£${value.toFixed(
-                2,
-              )}) has been rejected.</div>`,
-              true,
+              "Payment Successful",
+              "<p>Thank you for your purchase!</p>",
+              false,
             );
-            console.log(`Rejecting invalid cash: £${value.toFixed(2)}`);
+            Modal.confirmFunction()
           }
-        }
+        });
 
-        calculateChange() {
-          
+        Modal.show("Pay with Card", cardHTML, true);
+      }
+    }
+
+    class LoyaltyScanner {
+      static loyaltyStatus = false;
+      static #LOYALTY_DATA = [
+        { id: "000", name: "John Smith", code: "ABC123" },
+        { id: "001", name: "Jane Smith", code: "XYZ789" },
+        { id: "002", name: "Bob Johnson", code: "DEF456" },
+      ];
+
+      static checkLoyaltyId() {
+        const loyaltyIdInput = document.getElementById("input-loyalty-id");
+        const loyaltyMsg = document.getElementById("loyalty-msg");
+        const enteredId = loyaltyIdInput.value.trim();
+
+        const loyaltyData = this.#LOYALTY_DATA.find(
+          (loyalty) => loyalty.id === enteredId || loyalty.code === enteredId,
+        );
+
+        if (loyaltyData) {
+          loyaltyMsg.textContent = `Welcome, ${loyaltyData.name}! (10% Discount Applied)`;
+          loyaltyMsg.hidden = false;
+          this.loyaltyStatus = true;
+
+          if (controller.selectedDrink) {
+            const basePrice = controller.selectedDrink.price;
+            PaymentModule.currentPrice = this.applyLoyaltyDiscount(basePrice);
+            PaymentModule.updatePaymentDisplay(
+              controller.selectedDrink.id,
+              controller.selectedDrink.name,
+            );
+          }
+        } else {
+          loyaltyMsg.textContent = "*Error: Invalid Loyalty ID.";
+          loyaltyMsg.hidden = false;
+          this.loyaltyStatus = false;
         }
       }
-      class Logger {}
-      class TransactionRecord {}
 
-      // Initialize the vending machine controller and render the drinks table
-      const controller = new VendingController();
-      controller.renderDrinksTable();
+      static applyLoyaltyDiscount(price) {
+        return price * 0.9;
+      }
 
-      // Event Listeners
-      const idField = document.getElementById("input-drink-id");
-      idField.addEventListener("input", (e) => {
-        controller.selectDrink(e.target.value);
-      });
+      static getLoyaltyStatus() {
+        return this.loyaltyStatus;
+      }
+    }
 
-      const adminPassInput = document.getElementById("input-admin-pass");
-      adminPassInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") {
-          controller.checkAdminPass();
+    class BankService {
+      static #SAVED_CARDS = [
+        { number: "1234567890", pin: "1234" },
+        { number: "0987654321", pin: "4321" },
+      ];
+      static processCardPayment(cardNumber, cardPin, amount) {
+        console.log(`Processing card payment for £${amount.toFixed(2)}`);
+        const card = this.#SAVED_CARDS.find(
+          (c) => c.number === cardNumber && c.pin === cardPin,
+        );
+
+        if (!card) {
+          Modal.message("*Invalid card number or PIN.");
+          return false;
+        } else {
+          console.log("Card payment successful.");
+          return true;
         }
-      });
+      }
+    }
 
-      const loyaltyIdInput = document.getElementById("input-loyalty-id");
-      loyaltyIdInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") {
-          LoyaltyScanner.checkLoyaltyId();
+    class DrinkDispenser { }
+    class CashValidator {
+      static validCash = [10, 5, 2, 1, 0.5, 0.2, 0.1];
+      static checkCashValidity(value, type) {
+        if (type === "real" && this.validCash.includes(value)) {
+          return true;
+        } else {
+          ChangeDispenser.dispenseCash("rejected", value);
+          return false;
         }
-      });
+      }
+    }
 
-      const loyaltyBtn = document.getElementById("loyalty-btn");
-      loyaltyBtn.addEventListener("click", () => {
+    class CashSensor {
+      static #CASH_DATA = [
+        { type: "£10", worth: 10, stock: 5 },
+        { type: "£5", worth: 5, stock: 10 },
+        { type: "£2", worth: 2, stock: 20 },
+        { type: "£1", worth: 1, stock: 30 },
+        { type: "50p", worth: 0.5, stock: 40 },
+        { type: "20p", worth: 0.2, stock: 50 },
+        { type: "10p", worth: 0.1, stock: 60 },
+      ];
+      cash_data = [];
+      getCashData() {
+        return this.cash_data;
+      }
+    }
+
+    class WeightSensor {
+      static #WEIGHT_DATA = [
+        {
+          id: "000",
+          name: "Espresso",
+          weight: 3300,
+          fakeStock: 22,
+          individualWeight: 150,
+        },
+        {
+          id: "001",
+          name: "Latte",
+          weight: 3500,
+          fakeStock: 10,
+          individualWeight: 350,
+        },
+        {
+          id: "002",
+          name: "Hot Chocolate",
+          weight: 5250,
+          fakeStock: 15,
+          individualWeight: 350,
+        },
+        {
+          id: "003",
+          name: "Bottled Water",
+          weight: 10000,
+          fakeStock: 20,
+          individualWeight: 500,
+        },
+      ];
+      static #totalWeights = [];
+
+      // Calculate real stock based on weight data
+      static calculateRealStock() {
+        this.#totalWeights = this.#WEIGHT_DATA.map((drink) => {
+          const realStock = Math.floor(drink.weight / drink.individualWeight);
+          console.log(
+            `Drink: ${drink.name}, Weight: ${drink.weight}g, Real Stock: ${realStock}`,
+          );
+          return { id: drink.id, name: drink.name, realStock };
+        });
+      }
+
+      static getRealStock() {
+        this.calculateRealStock();
+        return this.#totalWeights;
+      }
+
+      static getDrinkWeight(drinkId) {
+        const drink = this.#WEIGHT_DATA.find((d) => d.id === drinkId);
+        return drink ? drink.weight : null;
+      }
+
+      static getDrinkIndividualWeight(drinkId) {
+        const drink = this.#WEIGHT_DATA.find((d) => d.id === drinkId);
+        return drink ? drink.individualWeight : null;
+      }
+    }
+    class TransactionTimer { }
+    class ChangeDispenser {
+      static dispenseCash(type, value) {
+        if (type === "change") {
+          this.calculateChange();
+          console.log(`Dispensing change: £${value.toFixed(2)}`);
+        } else if (type === "rejected") {
+          Modal.show(
+            "Invalid Cash",
+            `<div class="modal-terminal">The cash you inserted (£${value.toFixed(
+              2,
+            )}) has been rejected.</div>`,
+            true,
+          );
+          console.log(`Rejecting invalid cash: £${value.toFixed(2)}`);
+        }
+      }
+
+      calculateChange() {
+
+      }
+    }
+    class Logger { }
+    class TransactionRecord { }
+
+    // Initialize the vending machine controller and render the drinks table
+    const controller = new VendingController();
+    controller.renderDrinksTable();
+
+    // Event Listeners
+    const idField = document.getElementById("input-drink-id");
+    idField.addEventListener("input", (e) => {
+      controller.selectDrink(e.target.value);
+    });
+
+    const adminPassInput = document.getElementById("input-admin-pass");
+    adminPassInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        controller.checkAdminPass();
+      }
+    });
+
+    const loyaltyIdInput = document.getElementById("input-loyalty-id");
+    loyaltyIdInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
         LoyaltyScanner.checkLoyaltyId();
-      });
+      }
+    });
 
-      const cashBtn = document.getElementById("cash-btn");
-      cashBtn.addEventListener("click", () => {
-        if (controller.selectedDrink) {
-          CashReceiver.callModal();
-        } else {
-          VendingController.updateSelectionMessage(
-            "Please select a drink first.",
-          );
-        }
-      });
+    const loyaltyBtn = document.getElementById("loyalty-btn");
+    loyaltyBtn.addEventListener("click", () => {
+      LoyaltyScanner.checkLoyaltyId();
+    });
 
-      const cardBtn = document.getElementById("card-btn");
-      cardBtn.addEventListener("click", () => {
-        if (controller.selectedDrink) {
-          CardReader.callModal();
-        } else {
-          VendingController.updateSelectionMessage(
-            "Please select a drink first.",
-          );
-        }
-      });
-    </script>
-  </body>
+    const cashBtn = document.getElementById("cash-btn");
+    cashBtn.addEventListener("click", () => {
+      if (controller.selectedDrink) {
+        CashReceiver.callModal();
+      } else {
+        VendingController.updateSelectionMessage(
+          "Please select a drink first.",
+        );
+      }
+    });
+
+    const cardBtn = document.getElementById("card-btn");
+    cardBtn.addEventListener("click", () => {
+      if (controller.selectedDrink) {
+        CardReader.callModal();
+      } else {
+        VendingController.updateSelectionMessage(
+          "Please select a drink first.",
+        );
+      }
+    });
+  </script>
+</body>
+
 </html>
