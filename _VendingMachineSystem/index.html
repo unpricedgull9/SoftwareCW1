@@ -87,6 +87,7 @@
       #price;
       #stock;
 
+      // Constructor for creating drink object
       constructor(id, name, price, stock) {
         this.#id = id;
         this.#name = name;
@@ -339,12 +340,12 @@
 
         modal.hidden = false;
       }
-      
+
       static hide() {
         const modal = document.querySelector(".modal");
         const modalConfirmBtn = document.getElementById("modal-green");
         modal.hidden = true;
-        modalConfirmBtn.disabled = false; 
+        modalConfirmBtn.disabled = false;
       }
 
       static confirmFunction(callback) {
@@ -442,9 +443,9 @@
     class CardReader {
       static callModal() {
         const cardHTML = `
-            <input type="text" id="card-number" placeholder="Enter Card Number" style="margin-bottom: 1rem;" />
-            <input type="password" id="card-pin" placeholder="Enter PIN" />
-          `;
+        <input type="text" id="card-number" placeholder="Enter Card Number" style="margin-bottom: 1rem;" />
+        <input type="password" id="card-pin" placeholder="Enter PIN" />
+      `;
 
         Modal.confirmFunction(() => {
           const cardNumber = document.getElementById("card-number").value;
@@ -460,13 +461,15 @@
             Modal.hide();
             Modal.hideMessage();
 
-
             Modal.show(
               "Payment Successful",
               "<p>Thank you for your purchase!</p>",
               false,
             );
-            Modal.confirmFunction()
+            
+            Modal.confirmFunction(() => {
+              Modal.hide();
+            });
           }
         });
 
@@ -564,9 +567,13 @@
         { type: "20p", worth: 0.2, stock: 50 },
         { type: "10p", worth: 0.1, stock: 60 },
       ];
-      cash_data = [];
-      getCashData() {
-        return this.cash_data;
+
+      static getCashData() {
+        return this.#CASH_DATA;
+      }
+
+      static calculateChange(total) {
+
       }
     }
 
@@ -633,22 +640,31 @@
     class ChangeDispenser {
       static dispenseCash(type, value) {
         if (type === "change") {
-          this.calculateChange();
+          Modal.show(
+            "Collect Change",
+            ``,
+          );
           console.log(`Dispensing change: £${value.toFixed(2)}`);
         } else if (type === "rejected") {
           Modal.show(
             "Invalid Cash",
             `<div class="modal-terminal">The cash you inserted (£${value.toFixed(
               2,
-            )}) has been rejected.</div>`,
-            true,
+            )}) has been <b style='color: red;'>rejected</b> for being damaged or fake.</div>`,
+            false, // Shows the cancel button
           );
+
+          // Ensure the confirm button is enabled and dismisses the modal when clicked
+          const confirmBtn = document.getElementById("modal-green");
+          confirmBtn.disabled = false;
+
+          Modal.confirmFunction(() => {
+            Modal.hide();
+            Modal.hideMessage();
+          });
+
           console.log(`Rejecting invalid cash: £${value.toFixed(2)}`);
         }
-      }
-
-      calculateChange() {
-
       }
     }
     class Logger { }

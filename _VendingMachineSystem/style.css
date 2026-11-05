@@ -222,9 +222,11 @@ th {
 }
 
 .modal-terminal {
-  background-color: #ccc;
+  padding: 15px;
+  background-color: #DEDEDE;
+  border: 1px solid #00000015;
   text-align: left;
   vertical-align: top;
-  width: 100%;
+  width: auto;
   height: 100%;
 }
