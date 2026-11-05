@@ -116,7 +116,7 @@
       }
     }
 
-    // Stock Sensor Integration Module
+    // Stock Sensor Module
     class StockSensor {
       static #STOCK_DATA = [
         { id: "000", name: "Espresso", price: 1.5, weight: 150, stock: 0 },
@@ -168,7 +168,7 @@
       }
     }
 
-    // Core Vending Controller Logic
+    // Vending Controller Logic
     class VendingController {
       #adminPass = "1234";
 
@@ -581,7 +581,7 @@
       }
     }
 
-    // Bank Service Simulation Component
+    // Bank Service Component
     class BankService {
       static #SAVED_CARDS = [
         { number: "1234567890", pin: "1234" },
@@ -641,7 +641,7 @@
       }
     }
 
-    // Cash Sensor Inventory Component
+    // Cash Sensor Component
     class CashSensor {
       static #CASH_DATA = [
         { type: "£10", worth: 10, stock: 10 },
@@ -657,7 +657,7 @@
         return this.#CASH_DATA;
       }
 
-      // calculate exact change breakdown using greedy approach algorithm
+      // calculate exact change breakdown by trying to fit largest value into remaining cash
       static calculateChange(changeNeeded) {
         const changeToDispense = [];
 
