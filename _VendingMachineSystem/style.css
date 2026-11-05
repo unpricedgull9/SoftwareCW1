@@ -8,10 +8,14 @@
   --blue-color: #008cba;
   --yellow-color: #f0be35;
   --button-text-color: #fff;
+  --ten-pound-note-color: #F8CECC;
+  --five-pound-note-color: #DAE8FC;
+  --coin-color: #D5E8D4;
 }
 
 html {
   font-family: Arial, Helvetica, sans-serif;
+  box-sizing: border-box;
 }
 body {
   margin: 0;
@@ -43,7 +47,7 @@ header h1 {
 button {
   padding: 16px 24px;
   font-size: 16px;
-  border: 1px solid #ccc;
+  border: 2px solid #00000015;
   border-radius: 10px;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -54,6 +58,11 @@ button:hover {
     transition: opacity .3s;
     opacity: 0.85;
     text-decoration: underline !important;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 input {
@@ -146,31 +155,68 @@ th {
   background-color: var(--green-color);
   color: var(--button-text-color);
   /* similar colour border */
-  border: 1px solid var(--green-color);
 }
 
 .red-btn {
   background-color: var(--red-color);
   color: var(--button-text-color);
   /* similar colour border */
-  border: 1px solid var(--red-color);
 }
 
 .blue-btn {
   background-color: var(--blue-color);
   color: var(--button-text-color);
   /* similar colour border */
-  border: 1px solid var(--blue-color);
 }
 
 .yellow-btn {
   background-color: var(--yellow-color);
-  border: 1px solid var(--yellow-color);
   color: #000;
 }
 
 .purple-btn {
   background-color: var(--primary-color);
-  border: 1px solid var(--primary-color);
   color: var(--button-text-color);
+}
+
+.row{
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.cash-note-btn{
+  padding: 15px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  min-width: 100px;
+}
+
+.tenner{
+  background-color: var(--ten-pound-note-color);
+  border: 2px solid #00000015;
+}
+
+.fiver{
+  background-color: var(--five-pound-note-color);
+  border: 2px solid #00000015;
+}
+
+.cash-coin-btn{
+  background-color: var(--coin-color);
+  border: 2px solid #00000015;
+  border-radius: 50%;
+  padding: 0px;
+  min-width: 50px;
+  height: 50px;
+}
+
+.cash-container{
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
 }
