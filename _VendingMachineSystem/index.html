@@ -334,7 +334,10 @@
 
       static applyLoyaltyDiscount(price) {
         const discountRate = 0.1;
-        return price - (price * discountRate);
+        // Altered to avoid floating point errors
+        let newPrice = price - (price * discountRate);
+        newPrice = newPrice.toFixed(2)
+        return parseFloat(newPrice);
       }
 
       static updatePaymentDisplay(drinkID, drinkName) {
@@ -439,6 +442,10 @@
           <button class="cash-coin-btn" onclick="CashReceiver.insertCash(0.2)">20p</button>
         </div>
         <div class="row">
+          <button class="cash-coin-btn" onclick="CashReceiver.insertCash(0.5)">50p</button>
+          <button class="cash-coin-btn" onclick="CashReceiver.insertCash(0.2)">20p</button>
+        </div>
+        <div class="row">
           <button class="cash-coin-btn" onclick="CashReceiver.insertCash(0.1)">10p</button>
           <button class="cash-note-btn tenner" onclick="CashReceiver.insertCash(10, 'fake 10')">"Tenner"</button>
         </div>
@@ -460,30 +467,27 @@
             const drinkName = controller.selectedDrink.name;
             const drinkId = controller.selectedDrink.id;
 
-            // OLIVER this hopefully dispenses the weight (attempts to remove weight i havent really tested it)
             WeightSensor.dispenseDrinkStock(drinkId);
-            // OLIVER meant to update the table but doesnt, needs fixing
+
             controller.renderDrinksTable();
+
+            // check if change is required and calculate exact change breakdown
+            if (changeNeeded > 0) {
+              // calculates if change can be given
+              const changeResult = CashSensor.calculateChange(changeNeeded);
+              if (!changeResult.success) {
+                Modal.message("*Error: Machine cannot give exact change. Transaction cancelled.");
+                return;
+              } else {
+                ChangeDispenser.dispenseCash("change", changeNeeded, changeResult.change);
+                return;
+              }
+            }
 
             // this does get called on
             DrinkDispenser.dispenseDrink(drinkName);
           } else {
             Modal.hide();
-          };
-
-          // check if change is required and calculate exact change breakdown
-          if (changeNeeded > 0) {
-            // calculates if change can be given
-            const changeResult = CashSensor.calculateChange(changeNeeded);
-            if (!changeResult.success) {
-              Modal.message("*Error: Machine cannot give exact change. Transaction cancelled.");
-              return;
-            } else {
-              // OLIVER this used to work i honestly dont know what i did, i mustve changed something by accident while trying to get modal to display correctly
-              // while i was testing it was working again, might need reviewing
-              ChangeDispenser.dispenseCash("change", changeNeeded, changeResult.change);
-              return;
-            }
           }
         });
 
@@ -634,8 +638,8 @@
     class BankService {
       // OLIVER we should make the second account have no balance and the first have a bit so we can properly test card payment if its rejected by the bank
       static #SAVED_CARDS = [
-        { number: "1234567890", pin: "1234" },
-        { number: "0987654321", pin: "4321" },
+        { number: "1234567890", pin: "1234", balance: 500.00 },
+        { number: "0987654321", pin: "4321", balance: 0.00 } // Should decline on purchase
       ];
       static processCardPayment(cardNumber, cardPin, amount) {
         console.log(`Processing card payment for £${amount.toFixed(2)}`);
@@ -648,7 +652,13 @@
           Modal.message("*Invalid card number or PIN.");
           return false;
         } else {
+          if (card.balance < amount) {
+            Modal.message("*Card declined.");
+            return false
+          }
+          card.balance -= amount
           console.log("Card payment successful.");
+          console.log("New balance: " + card.balance)
           return true;
         }
       }
