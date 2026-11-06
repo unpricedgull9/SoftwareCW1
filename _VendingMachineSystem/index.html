@@ -94,7 +94,7 @@
       #name;
       #price;
       #stock;
-
+      // constructor builds drink
       constructor(id, name, price, stock) {
         this.#id = id;
         this.#name = name;
@@ -102,6 +102,7 @@
         this.#stock = stock;
       }
 
+      // getters to retrieve data from Drink obj
       get id() {
         return this.#id;
       }
@@ -118,6 +119,7 @@
 
     // Stock Sensor Module
     class StockSensor {
+      // dont ask me why this stupid json is formatted like this when you hit quick format
       static #STOCK_DATA = [
         { id: "000", name: "Espresso", price: 1.5, weight: 150, stock: 0 },
         { id: "001", name: "Latte", price: 2.2, weight: 250, stock: 0 },
@@ -137,16 +139,21 @@
         },
       ];
 
-      // sync stock counts with weight sensor data
+      // stock sensor requests weight sensor to calculate how many drinks are in each compartment??? (dunno what its called)
       static getStock() {
+        // sets the genuine calculated stock data from the weight sensor
         const realStockData = WeightSensor.getRealStock();
+        // prepares a list that will be populated with stock
         const updatedStockList = [];
 
         // iterate through stock items to match and update stock counts dynamically based on weight sensor readings
         for (const drink of this.#STOCK_DATA) {
+          // matches item (drink from weight sensor) with drink (from STOCK_DATA)
           const match = realStockData.find((item) => item.id === drink.id);
+          // if match, assign stock, if not, 0
           const currentStock = match ? match.realStock : 0;
 
+          // populates the object
           const drinkWithStock = {
             id: drink.id,
             name: drink.name,
@@ -154,12 +161,14 @@
             stock: currentStock,
           };
 
+          // appends it to the json
           updatedStockList.push(drinkWithStock);
         }
 
         return updatedStockList;
       }
 
+      // literally replaces placeholder stock with calculated stock
       static updateStock(drinkId, newStock) {
         const drink = this.#STOCK_DATA.find((d) => d.id === drinkId);
         if (drink) {
@@ -170,13 +179,16 @@
 
     // Vending Controller Logic
     class VendingController {
+      // hardcoded password to display logic for the hardcoded prototype
       #adminPass = "1234";
 
+      // initialisation method that runs at the beginning
       constructor() {
         this.drinks = [];
         this.selectedDrink = null;
 
-        // initialize controller inventory by mapping stock data into drink instances
+        // initialise inventory and populate it with new instances of drink (just populates the table) but might need refining
+        // OLIVER i suspect putting this code into an actual method instead of constructor might fix the stock not updating when stock decreases.
         StockSensor.getStock().forEach((stockDrink) => {
           this.drinks.push(
             new Drink(
@@ -189,6 +201,7 @@
         });
       }
 
+      // method to check the admin pin 
       checkAdminPass() {
         const adminPassInput = document.getElementById("input-admin-pass");
         const adminPassBtn = document.getElementById("admin-btn");
@@ -196,10 +209,12 @@
         const adminBtns = document.querySelector(".admin-btns");
 
         const enteredPass = adminPassInput.value;
-        // validate admin pin and toggle administrative control elements accordingly
+        // checks if the pin is correct
         if (enteredPass === this.#adminPass) {
+          // hides the inputs if correct
           adminMsg.hidden = true;
           adminBtns.hidden = false;
+          // displays the hidden buttons
           adminBtns.style.display = "flex";
           adminPassInput.hidden = true;
           adminPassBtn.hidden = true;
@@ -211,17 +226,19 @@
         }
       }
 
+      // method to allow a user to select a drink
       selectDrink(id) {
         const msgElement = document.getElementById("sel-msg");
         const trimmedId = id.toString().trim();
 
-        // clear selection if input length is insufficient
+        // clear selection and message if input length isnt 3 characters
         if (trimmedId.length < 3) {
           msgElement.hidden = true;
           this.clearSelectionDisplay();
           return;
         }
 
+        // finds the drink that correlates with inputted id
         const drink = this.drinks.find((d) => d.id === trimmedId);
 
         // handle error if drink id is invalid
@@ -240,9 +257,13 @@
           return;
         }
 
+        // selects the drink
         this.selectedDrink = drink;
+
+        // hides any messages that may linger
         msgElement.hidden = true;
 
+        // selects the price of the drink
         PaymentModule.currentPrice = drink.price;
         // apply active loyalty discount to item price if user loyalty status is verified
         if (LoyaltyScanner.loyaltyStatus) {
@@ -250,9 +271,11 @@
             drink.price,
           );
         }
+        // updates the display with the available data
         PaymentModule.updatePaymentDisplay(drink.id, drink.name);
       }
 
+      // clears the display if a drink isnt selected
       clearSelectionDisplay() {
         this.selectedDrink = null;
         PaymentModule.currentPrice = 0;
@@ -270,8 +293,10 @@
         }
       }
 
+      // renders the drinks table
       renderDrinksTable() {
         const table = document.querySelector("#drinks-panel table");
+        // redundancy
         if (!table) return;
 
         let html = `
@@ -324,6 +349,7 @@
           priceDisplay.textContent = "Price: £N/A";
         }
 
+        // OLIVER i feel like we might be able to integrate this into like a update selection function, it works tho so might not have to
         if (drinkID && drinkName) {
           idDisplay.textContent = `ID: ${drinkID}`;
           nameDisplay.textContent = `Drink: ${drinkName}`;
@@ -334,8 +360,9 @@
       }
     }
 
-    // Modal Dialog Manager
+    // Modal Class
     class Modal {
+      // im so proud of this like 10% of the time, too many issues with confirm button
       static show(header, content, showCancel = false) {
         const modal = document.querySelector(".modal");
         const modalHeader = document.getElementById("modal-header");
@@ -344,13 +371,16 @@
         const modalConfirmBtn = document.getElementById("modal-green");
         const modalMsg = document.getElementById("modal-msg");
 
+        // builds the modal
         modalHeader.textContent = header;
         modalContent.innerHTML = content;
         modalCancelBtn.hidden = !showCancel;
 
+        // displays the modal
         modal.hidden = false;
       }
 
+      // OLIVER it works most the time, sometimes button likes to stay disables after modal closes, probably error in other parts of code
       static hide() {
         const modal = document.querySelector(".modal");
         const modalConfirmBtn = document.getElementById("modal-green");
@@ -358,6 +388,7 @@
         modalConfirmBtn.disabled = false;
       }
 
+      // allows you to put a function in a parameter that gets called on when green button is clicked.
       static confirmFunction(callback) {
         const confirmBtn = document.getElementById("modal-green");
         confirmBtn.onclick = () => {
@@ -377,11 +408,13 @@
       }
     }
 
-    // Cash Receiver Mechanism Component
+    // Cash Receiver Component
     class CashReceiver {
       static #totalInserted = 0.0;
       static #cash = [];
 
+      // calls modal that displays cash inputs
+      // theres a fake tenner in the inputs to display what would happen if fake or invalid currency was inserted into the machine
       static callModal() {
         this.#totalInserted = 0.0;
         this.#cash = [];
@@ -414,23 +447,22 @@
         const confirmBtn = document.getElementById("modal-green");
         confirmBtn.disabled = true;
 
-        // handle cash confirmation and sequential change/drink dispatch flow
+        // handles the logical flow and process of confirming payment and dispensing drink
         Modal.confirmFunction(() => {
           const changeNeeded = parseFloat((this.#totalInserted - PaymentModule.currentPrice).toFixed(2));
 
-          // helper function to handle dispensing the selected drink
-          const dispenseSelectedDrink = () => {
-            if (controller.selectedDrink) {
-              const drinkName = controller.selectedDrink.name;
-              const drinkId = controller.selectedDrink.id;
+          // gets the name and id,
+          if (controller.selectedDrink) {
+            const drinkName = controller.selectedDrink.name;
+            const drinkId = controller.selectedDrink.id;
 
-              WeightSensor.dispenseDrinkStock(drinkId);
-              controller.renderDrinksTable();
+            // OLIVER this hopefully dispenses the weight (attempts to remove weight i havent really tested it)
+            WeightSensor.dispenseDrinkStock(drinkId);
+            controller.renderDrinksTable();
 
-              DrinkDispenser.dispenseDrink(drinkName);
-            } else {
-              Modal.hide();
-            }
+            DrinkDispenser.dispenseDrink(drinkName);
+          } else {
+            Modal.hide();
           };
 
           // check if change is required and calculate exact change breakdown
@@ -517,7 +549,7 @@
 
               WeightSensor.dispenseDrinkStock(drinkId);
               controller.renderDrinksTable();
-              
+
               DrinkDispenser.dispenseDrink(drinkName);
             }
 
@@ -619,7 +651,7 @@
         const confirmBtn = document.getElementById("modal-green");
         confirmBtn.textContent = "Confirm";
         confirmBtn.disabled = false;
-        
+
         Modal.confirmFunction(() => {
           Modal.hide();
           controller.clearSelectionDisplay();
