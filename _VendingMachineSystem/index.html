@@ -186,9 +186,12 @@
       constructor() {
         this.drinks = [];
         this.selectedDrink = null;
+        this.refreshInventory();
+      }
 
-        // initialise inventory and populate it with new instances of drink (just populates the table) but might need refining
-        // OLIVER i suspect putting this code into an actual method instead of constructor might fix the stock not updating when stock decreases.
+      // Populates the drinks array with drink objects from the json file
+      refreshInventory() {
+        this.drinks = [];
         StockSensor.getStock().forEach((stockDrink) => {
           this.drinks.push(
             new Drink(
@@ -295,6 +298,7 @@
 
       // renders the drinks table
       renderDrinksTable() {
+        this.refreshInventory();
         const table = document.querySelector("#drinks-panel table");
         // redundancy
         if (!table) return;
