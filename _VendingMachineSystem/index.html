@@ -458,8 +458,10 @@
 
             // OLIVER this hopefully dispenses the weight (attempts to remove weight i havent really tested it)
             WeightSensor.dispenseDrinkStock(drinkId);
+            // OLIVER meant to update the table but doesnt, needs fixing
             controller.renderDrinksTable();
 
+            // this does get called on
             DrinkDispenser.dispenseDrink(drinkName);
           } else {
             Modal.hide();
@@ -467,37 +469,43 @@
 
           // check if change is required and calculate exact change breakdown
           if (changeNeeded > 0) {
+            // calculates if change can be given
             const changeResult = CashSensor.calculateChange(changeNeeded);
             if (!changeResult.success) {
               Modal.message("*Error: Machine cannot give exact change. Transaction cancelled.");
               return;
             } else {
-              // pass dispenseSelectedDrink as a callback so drink dispenses after change collection
-              ChangeDispenser.dispenseCash("change", changeNeeded, changeResult.change, dispenseSelectedDrink);
+              // OLIVER this used to work i honestly dont know what i did, i mustve changed something by accident while trying to get modal to display correctly
+              // while i was testing it was working again, might need reviewing
+              ChangeDispenser.dispenseCash("change", changeNeeded, changeResult.change);
               return;
             }
           }
-
-          dispenseSelectedDrink();
         });
 
+        // this looks so clean
         Modal.show("Pay with Cash", cashHTML, true);
       }
 
       static insertCash(value, type = "real") {
         // validate cash validity and track inserted totals against target price
         if (CashValidator.checkCashValidity(value, type)) {
+          // adds value to total
           this.#totalInserted += value;
+          // updates the total
           this.updateCashTotal(
             this.#totalInserted,
             PaymentModule.currentPrice,
           );
+          // stores how many of a specific currency was used
           this.#cash.push(value.toString());
+          // allow user to pay if theyve added enough
           if (this.#totalInserted >= PaymentModule.currentPrice) {
             const confirmBtn = document.getElementById("modal-green");
             const btns = document.querySelectorAll(
               ".cash-note-btn, .cash-coin-btn",
             );
+            // disables cash buttons
             btns.forEach((btn) => {
               btn.disabled = true;
             });
@@ -506,10 +514,12 @@
             }
           }
         } else {
+          // OLIVER we should dispense cash on cancel for logics sake
           Modal.message("*Error: Invalid cash inserted.");
         }
       }
 
+      // updates the total inserted cash
       static updateCashTotal(totalInserted, totalPrice) {
         const cashTotalElement = document.getElementById("cash-total");
         if (cashTotalElement) {
@@ -520,7 +530,8 @@
       }
     }
 
-    // Card Reader Processing Component
+    // Card Reader Component
+    // this entire class is rather basic
     class CardReader {
       static callModal() {
         const cardHTML = `
@@ -543,6 +554,7 @@
             Modal.hide();
             Modal.hideMessage();
 
+            // on successful payment, drink gets dispensed and modal pops up
             if (controller.selectedDrink) {
               const drinkName = controller.selectedDrink.name;
               const drinkId = controller.selectedDrink.id;
@@ -553,6 +565,7 @@
               DrinkDispenser.dispenseDrink(drinkName);
             }
 
+            // these are so fun but so painful to do im gonna go mad
             Modal.confirmFunction(() => {
               Modal.hide();
               controller.clearSelectionDisplay();
@@ -582,13 +595,13 @@
         const loyaltyData = this.#LOYALTY_DATA.find(
           (loyalty) => loyalty.id === enteredId || loyalty.code === enteredId,
         );
-
         if (loyaltyData) {
           loyaltyMsg.textContent = `Welcome, ${loyaltyData.name}! (10% Discount Applied)`;
           loyaltyMsg.hidden = false;
           this.loyaltyStatus = true;
 
           // update current pricing dynamically if a drink is already selected
+          // OLIVER for some reason only hot chocolate can be bought with a loyalty discount, otherwise change cant be provided, idk whats causing it good luck
           if (controller.selectedDrink) {
             const basePrice = controller.selectedDrink.price;
             PaymentModule.currentPrice = this.applyLoyaltyDiscount(basePrice);
@@ -615,6 +628,7 @@
 
     // Bank Service Component
     class BankService {
+      // OLIVER we should make the second account have no balance and the first have a bit so we can properly test card payment if its rejected by the bank
       static #SAVED_CARDS = [
         { number: "1234567890", pin: "1234" },
         { number: "0987654321", pin: "4321" },
@@ -638,6 +652,7 @@
 
     // Drink Dispenser UI Component
     class DrinkDispenser {
+      // OLIVER modal works well, but the stock doesnt update and you might need to try and test it through console
       static dispenseDrink(drinkName) {
         Modal.show(
           "Dispensing Drink",
@@ -692,13 +707,13 @@
       // calculate exact change breakdown by trying to fit largest value into remaining cash
       static calculateChange(changeNeeded) {
         const changeToDispense = [];
-
+  // checks all objects in json
         for (let i = 0; i < this.#CASH_DATA.length; i++) {
           const item = this.#CASH_DATA[i];
           if (changeNeeded <= 0) {
             break;
           }
-
+          // rounds the number down but now thinking about it while commenting this might need changing? OLIVER
           let count = Math.floor(changeNeeded / item.worth);
 
           if (count > item.stock) {
@@ -711,7 +726,7 @@
           }
         }
 
-        // return failure flag if exact change cannot be fulfilled from available reserves
+        // return failure flag if exact change cannot be taken out of stock
         if (changeNeeded > 0) {
           console.log("Machine cannot provide exact change!");
           return { success: false, change: [] };
@@ -722,7 +737,7 @@
       }
     }
 
-    // Weight Sensor Inventory Tracking Component
+    // Weight Sensor Tracking Component
     class WeightSensor {
       static #WEIGHT_DATA = [
         {
@@ -756,6 +771,7 @@
       ];
       static #totalWeights = [];
 
+      // OLIVER i havent checked if these methods all work correctly
       static calculateRealStock() {
         // compute real stock levels based on current weights divided by item individual weights
         this.#totalWeights = this.#WEIGHT_DATA.map((drink) => {
@@ -769,7 +785,7 @@
         return this.#totalWeights;
       }
 
-      // safely reduce drink weight when purchased
+      // reduce drink weight when purchased (at least should)
       static dispenseDrinkStock(drinkId) {
         const drink = this.#WEIGHT_DATA.find((d) => d.id === drinkId);
         if (drink && drink.weight >= drink.individualWeight) {
@@ -783,11 +799,12 @@
       }
     }
 
+    // OLIVER should be easy to implement but idk how timers or anything work in js
     class TransactionTimer { }
 
     // Change Dispenser Handles Physical Payout And Inventory Sync
     class ChangeDispenser {
-      static dispenseCash(type, value, changeData = [], onCollect = null) {
+      static dispenseCash(type, value, changeData = []) {
         if (type === "change") {
           // deduct dispensed change quantities from internal cash stock data registers
           for (const dispensed of changeData) {
@@ -819,10 +836,6 @@
             confirmBtn.textContent = "Confirm";
             Modal.hide();
 
-            // trigger next step after collecting change
-            if (typeof onCollect === "function") {
-              onCollect();
-            }
           });
 
           console.log(`Dispensing change: £${value.toFixed(2)}`);
@@ -848,14 +861,15 @@
       }
     }
 
+    // OLIVER this bit might be a pain ill help if you really need it, its just gonna take forever
     class Logger { }
     class TransactionRecord { }
 
-    // Application Initialization Section
+    // Application Initialization 
     const controller = new VendingController();
     controller.renderDrinksTable();
 
-    // Event Listeners Registration Section
+    // Event Listeners Registration 
     const idField = document.getElementById("input-drink-id");
     idField.addEventListener("input", (e) => {
       controller.selectDrink(e.target.value);
