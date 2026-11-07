@@ -262,6 +262,14 @@
 
         // selects the drink
         this.selectedDrink = drink;
+        
+        // Start a 30s timeout timer
+        TransactionTimer.startTimer(() => {
+          this.clearSelectionDisplay();
+          document.getElementById('input-drink-id').value = ''
+          VendingController.updateSelectionMessage("*Session timed out. Please select again.");
+          Modal.hide();
+        });
 
         // hides any messages that may linger
         msgElement.hidden = true;
@@ -389,6 +397,7 @@
 
       // OLIVER it works most the time, sometimes button likes to stay disables after modal closes, probably error in other parts of code
       static hide() {
+        TransactionTimer.clearTimer();
         const modal = document.querySelector(".modal");
         const modalConfirmBtn = document.getElementById("modal-green");
         modal.hidden = true;
@@ -423,6 +432,12 @@
       // calls modal that displays cash inputs
       // theres a fake tenner in the inputs to display what would happen if fake or invalid currency was inserted into the machine
       static callModal() {
+        TransactionTimer.resetTimer(() => {
+          Modal.hide();
+          controller.clearSelectionDisplay();
+          document.getElementById('input-drink-id').value = ''
+          VendingController.updateSelectionMessage("*Payment timed out. Session cancelled.");
+        });
         this.#totalInserted = 0.0;
         this.#cash = [];
         let totalPrice = PaymentModule.currentPrice;
@@ -496,6 +511,13 @@
       }
 
       static insertCash(value, type = "real") {
+        // Resets timeout timer
+        TransactionTimer.resetTimer(() => {
+          Modal.hide();
+          controller.clearSelectionDisplay();
+          document.getElementById('input-drink-id').value = ''
+          VendingController.updateSelectionMessage("*Payment timed out. Session cancelled.");
+        });
         // validate cash validity and track inserted totals against target price
         if (CashValidator.checkCashValidity(value, type)) {
           // adds value to total
@@ -542,6 +564,12 @@
     // this entire class is rather basic
     class CardReader {
       static callModal() {
+        TransactionTimer.resetTimer(() => {
+          Modal.hide();
+          controller.clearSelectionDisplay();
+          document.getElementById('input-drink-id').value = ''
+          VendingController.updateSelectionMessage("*Payment timed out. Session cancelled.");
+        });
         const cardHTML = `
         <input type="text" id="card-number" placeholder="Enter Card Number" style="margin-bottom: 1rem;" />
         <input type="password" id="card-pin" placeholder="Enter PIN" />
@@ -668,6 +696,7 @@
     class DrinkDispenser {
       // OLIVER modal works well, but the stock doesnt update and you might need to try and test it through console
       static dispenseDrink(drinkName) {
+        TransactionTimer.clearTimer();
         Modal.show(
           "Dispensing Drink",
           `<div class="modal-terminal">
@@ -813,12 +842,42 @@
       }
     }
 
-    // OLIVER should be easy to implement but idk how timers or anything work in js
-    class TransactionTimer { }
+    // Transaction Timer to time out a transaction when it lasts longer than 30 seconds
+    class TransactionTimer {
+      static #timer = null; // Stores the currently running timer
+      static #TIMEOUT_DURATION = 3000//0; // 30 seconds in milliseconds
+
+      // Start or restart the idle countdown timer
+      static startTimer(onTimeoutCallback) {
+        this.clearTimer(); // Always clear any existing timer first
+
+        // setTimeout lets you bind a function to a timer in milliseconds
+        this.#timer = setTimeout(() => {
+          console.log("Transaction timed out due to inactivity.");
+          if (typeof onTimeoutCallback === "function") {
+            onTimeoutCallback();
+          }
+        }, this.#TIMEOUT_DURATION);
+      }
+
+      // Called whenever user interacts with the modal
+      static resetTimer(onTimeoutCallback) {
+        this.startTimer(onTimeoutCallback);
+      }
+
+      // Called when the transaction is finished
+      static clearTimer() {
+        if (this.#timer) {
+          clearTimeout(this.#timer);
+          this.#timer = null;
+        }
+      }
+    }
 
     // Change Dispenser Handles Physical Payout And Inventory Sync
     class ChangeDispenser {
       static dispenseCash(type, value, changeData = []) {
+        TransactionTimer.clearTimer();
         if (type === "change") {
           // deduct dispensed change quantities from internal cash stock data registers
           for (const dispensed of changeData) {
