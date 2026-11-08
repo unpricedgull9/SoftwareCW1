@@ -48,6 +48,7 @@ class Admin {
   }
 
   static collectCash() {
+    // function also returns total cash collected
     const collectedCash = CashSensor.emptyCash();
     Modal.show(
       "Cash Collected Successfully!",

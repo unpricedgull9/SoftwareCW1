@@ -10,6 +10,8 @@ class TransactionTimer {
     // setTimeout lets you bind a function to a timer in milliseconds
     this.#timer = setTimeout(() => {
       console.log("Transaction timed out due to inactivity.");
+      // revert loyalty discount to ensure member isnt still logged in
+      LoyaltyScanner.revertLoyaltyDiscount(); 
       if (typeof onTimeoutCallback === "function") {
         onTimeoutCallback();
       }

@@ -17,19 +17,23 @@ class LoyaltyScanner {
       (loyalty) => loyalty.id === enteredId || loyalty.code === enteredId,
     );
     if (loyaltyData) {
-      loyaltyMsg.textContent = `Welcome, ${loyaltyData.name}! (10% Discount Applied)`;
-      loyaltyMsg.hidden = false;
-      this.loyaltyStatus = true;
-
       // update current pricing dynamically if a drink is already selected
       // OLIVER for some reason only hot chocolate can be bought with a loyalty discount, otherwise change cant be provided, idk whats causing it good luck
       if (controller.selectedDrink) {
+        loyaltyMsg.textContent = `Welcome, ${loyaltyData.name}! (10% Discount Applied)`;
+        loyaltyMsg.hidden = false;
+        this.loyaltyStatus = true;
         const basePrice = controller.selectedDrink.price;
         PaymentModule.currentPrice = this.applyLoyaltyDiscount(basePrice);
         PaymentModule.updatePaymentDisplay(
           controller.selectedDrink.id,
           controller.selectedDrink.name,
         );
+      } 
+      // only allows you to add discount if drink is selected
+      else {
+        loyaltyMsg.textContent = `A drink must be selected to apply discount!`;
+        loyaltyMsg.hidden = false;
       }
     } else {
       loyaltyMsg.textContent = "*Error: Invalid Loyalty ID.";
@@ -40,6 +44,12 @@ class LoyaltyScanner {
 
   static applyLoyaltyDiscount(price) {
     return price * 0.9;
+  }
+
+  static revertLoyaltyDiscount(price) {
+    this.loyaltyStatus=false;
+    const loyaltyMsg = document.getElementById("loyalty-msg");
+    loyaltyMsg.textContent = "* Session Expired, please enter again!";
   }
 
   static getLoyaltyStatus() {
