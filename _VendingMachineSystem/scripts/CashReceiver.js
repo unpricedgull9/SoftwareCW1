@@ -79,6 +79,7 @@ class CashReceiver {
               changeResult.change,
               () => DrinkDispenser.dispenseDrink(drinkName),
             );
+            Logger.log("Purchase", `${drinkName} (${drinkId}) (Change: £${changeNeeded.toFixed(2)})`, PaymentModule.currentPrice, "Cash");
             return;
           }
         }

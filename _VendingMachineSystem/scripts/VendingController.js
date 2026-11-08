@@ -42,6 +42,7 @@ class VendingController {
       adminBtns.style.display = "flex";
       adminPassInput.hidden = true;
       adminPassBtn.hidden = true;
+      Logger.log("Admin", "Logged into admin panel");
     } else {
       adminMsg.textContent = "* Incorrect PIN. Please try again.";
       adminMsg.hidden = false;
