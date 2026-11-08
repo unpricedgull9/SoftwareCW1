@@ -60,4 +60,18 @@ class CashSensor {
     console.log("Machine can provide exact change.");
     return { success: true, change: changeToDispense };
   }
+  // only empties to 1 (in case people need change)
+  static emptyCash() {
+    // sets total
+    let total = 0.00;
+    // gets current cash
+    const currentCash = this.getCashData();
+    // for every cash type, add worth to total (minus 1)
+    currentCash.forEach((cash) => {
+      total += (cash.stock - 1) * cash.worth;
+      // sets stock to one
+      cash.stock = 1;
+    });
+    return total.toFixed(2);
+  }
 }

@@ -9,7 +9,7 @@ class Admin {
     );
 
     const msg = document.getElementById("admin-msg");
-    msg.innerText = "* Drinks restocked (5)";
+    msg.innerText = "*  Drinks restocked (5)";
     msg.hidden = false;
   }
 
@@ -29,16 +29,39 @@ class Admin {
     `;
 
     // Show modal with title "Cash Inventory" matching your layout format
-    Modal.show("Cash Inventory", cashHTML, false);
+    Modal.show("Cash Inventory", cashHTML, true);
 
     const confirmBtn = document.getElementById("modal-green");
+
+    confirmBtn.textContent = "Collect";
+    confirmBtn.disabled = false;
+
+    const cancelBtn = document.getElementById("modal-red");
+    cancelBtn.onclick = () => {
+      Modal.hide();
+    };
+    Modal.confirmFunction(() => {
+      this.collectCash();
+    });
+
+    console.log("Viewing cash inventory:", cashData);
+  }
+
+  static collectCash() {
+    // function also returns total cash collected
+    const collectedCash = CashSensor.emptyCash();
+    Modal.show(
+      "Cash Collected Successfully!",
+      `<h3 style="color:var(--green-color);margin-top:0;">£${collectedCash}</h3>All cash in the machine is now empty but one of each.`,
+      false,
+    );
+    const confirmBtn = document.getElementById("modal-green");
+
     confirmBtn.textContent = "Confirm";
     confirmBtn.disabled = false;
 
     Modal.confirmFunction(() => {
       Modal.hide();
     });
-
-    console.log("Viewing cash inventory:", cashData);
   }
 }

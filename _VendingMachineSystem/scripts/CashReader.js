@@ -7,7 +7,7 @@ class CardReader {
       controller.clearSelectionDisplay();
       document.getElementById("input-drink-id").value = "";
       VendingController.updateSelectionMessage(
-        "*Payment timed out. Session cancelled.",
+        "* Payment timed out. Session cancelled.",
       );
     });
     const cardHTML = `
