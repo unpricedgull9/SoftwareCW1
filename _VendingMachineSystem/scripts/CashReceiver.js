@@ -10,7 +10,7 @@ class CashReceiver {
       controller.clearSelectionDisplay();
       document.getElementById("input-drink-id").value = "";
       VendingController.updateSelectionMessage(
-        "*Payment timed out. Session cancelled.",
+        "* Payment timed out. Session cancelled.",
       );
     });
     this.#totalInserted = 0.0;
@@ -68,7 +68,7 @@ class CashReceiver {
           const changeResult = CashSensor.calculateChange(changeNeeded);
           if (!changeResult.success) {
             Modal.message(
-              "*Error: Machine cannot give exact change. Transaction cancelled.",
+              "* Error: Machine cannot give exact change. Transaction cancelled.",
             );
             return;
           } else {
@@ -100,7 +100,7 @@ class CashReceiver {
       controller.clearSelectionDisplay();
       document.getElementById("input-drink-id").value = "";
       VendingController.updateSelectionMessage(
-        "*Payment timed out. Session cancelled.",
+        "* Payment timed out. Session cancelled.",
       );
     });
     // validate cash validity and track inserted totals against target price
@@ -125,7 +125,7 @@ class CashReceiver {
         }
       }
     } else {
-      Modal.message("*Error: Invalid cash inserted.");
+      Modal.message("* Error: Invalid cash inserted.");
     }
   }
 

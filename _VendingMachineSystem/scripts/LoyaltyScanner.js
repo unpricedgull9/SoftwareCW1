@@ -36,7 +36,7 @@ class LoyaltyScanner {
         loyaltyMsg.hidden = false;
       }
     } else {
-      loyaltyMsg.textContent = "*Error: Invalid Loyalty ID.";
+      loyaltyMsg.textContent = "* Error: Invalid Loyalty ID.";
       loyaltyMsg.hidden = false;
       this.loyaltyStatus = false;
     }
@@ -49,7 +49,7 @@ class LoyaltyScanner {
   static revertLoyaltyDiscount(price) {
     this.loyaltyStatus=false;
     const loyaltyMsg = document.getElementById("loyalty-msg");
-    loyaltyMsg.textContent = "* Session Expired, please enter again!";
+    loyaltyMsg.textContent = "*  Session Expired, please enter again!";
   }
 
   static getLoyaltyStatus() {

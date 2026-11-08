@@ -13,11 +13,11 @@ class BankService {
 
     // verify card details against saved records
     if (!card) {
-      Modal.message("*Invalid card number or PIN.");
+      Modal.message("* Invalid card number or PIN.");
       return false;
     } else {
       if (card.balance < amount) {
-        Modal.message("*Card declined.");
+        Modal.message("* Card declined.");
         return false;
       }
       card.balance -= amount;

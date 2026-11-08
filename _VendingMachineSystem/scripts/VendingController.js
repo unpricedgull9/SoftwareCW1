@@ -43,7 +43,7 @@ class VendingController {
       adminPassInput.hidden = true;
       adminPassBtn.hidden = true;
     } else {
-      adminMsg.textContent = "*Incorrect PIN. Please try again.";
+      adminMsg.textContent = "* Incorrect PIN. Please try again.";
       adminMsg.hidden = false;
       adminBtns.hidden = true;
       adminBtns.style.display = "none";
@@ -67,7 +67,7 @@ class VendingController {
 
     // handle error if drink id is invalid
     if (!drink) {
-      msgElement.textContent = "*Error: Invalid Drink ID.";
+      msgElement.textContent = "* Error: Invalid Drink ID.";
       msgElement.hidden = false;
       this.clearSelectionDisplay();
       return;
@@ -89,7 +89,7 @@ class VendingController {
       this.clearSelectionDisplay();
       document.getElementById("input-drink-id").value = "";
       VendingController.updateSelectionMessage(
-        "*Session timed out. Please select again.",
+        "*  Session timed out. Please select again.",
       );
       Modal.hide();
     });

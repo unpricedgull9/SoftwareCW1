@@ -9,7 +9,7 @@ class Admin {
     );
 
     const msg = document.getElementById("admin-msg");
-    msg.innerText = "* Drinks restocked (5)";
+    msg.innerText = "*  Drinks restocked (5)";
     msg.hidden = false;
   }
 
