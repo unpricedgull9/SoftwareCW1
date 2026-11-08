@@ -39,6 +39,7 @@ class CardReader {
           controller.renderDrinksTable();
 
           DrinkDispenser.dispenseDrink(drinkName);
+          Logger.log("Purchase", `${drinkName} (${drinkId})`, PaymentModule.currentPrice, "Card");
         }
 
         // these are so fun but so painful to do im gonna go mad
