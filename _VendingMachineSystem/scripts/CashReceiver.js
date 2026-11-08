@@ -70,6 +70,7 @@ class CashReceiver {
             Modal.message(
               "*Error: Machine cannot give exact change. Transaction cancelled.",
             );
+            Logger.log("Error", "Not enough change", value);
             return;
           } else {
             ChangeDispenser.dispenseCash(
@@ -83,6 +84,7 @@ class CashReceiver {
         }
 
         // this does get called on
+        Logger.log("Purchase", `${drinkName} (${drinkId})`, PaymentModule.currentPrice, "Cash");
         DrinkDispenser.dispenseDrink(drinkName);
       } else {
         Modal.hide();
@@ -125,6 +127,7 @@ class CashReceiver {
         }
       }
     } else {
+      Logger.log("Error", "Invalid cash inserted", value);
       Modal.message("*Error: Invalid cash inserted.");
     }
   }
