@@ -89,7 +89,8 @@
   <!-- Vending Machine Scripts -->
   <script src="scripts/Admin.js"></script>
   <script src="scripts/BankService.js"></script>
-  <script src="scripts/CashReader.js"></script>
+  <script src="scripts/PaymentMethod.js"></script>
+  <script src="scripts/CardReader.js"></script>
   <script src="scripts/CashReceiver.js"></script>
   <script src="scripts/CashSensor.js"></script>
   <script src="scripts/CashValidator.js"></script>
@@ -138,7 +139,7 @@
     const cashBtn = document.getElementById("cash-btn");
     cashBtn.addEventListener("click", () => {
       if (controller.selectedDrink) {
-        CashReceiver.callModal();
+        PaymentMethod.open(CashReceiver);
       } else {
         VendingController.updateSelectionMessage(
           "Please select a drink first.",
@@ -149,7 +150,7 @@
     const cardBtn = document.getElementById("card-btn");
     cardBtn.addEventListener("click", () => {
       if (controller.selectedDrink) {
-        CardReader.callModal();
+        PaymentMethod.open(CardReader);
       } else {
         VendingController.updateSelectionMessage(
           "Please select a drink first.",

@@ -1,5 +1,5 @@
 // Cash Receiver Component
-class CashReceiver {
+class CashReceiver extends PaymentMethod {
   static #totalInserted = 0.0;
 
   // calls modal that displays cash inputs

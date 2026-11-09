@@ -1,6 +1,6 @@
 // Card Reader Component
 // this entire class is rather basic
-class CardReader {
+class CardReader extends PaymentMethod {
   static callModal() {
     TransactionTimer.resetTimer(() => {
       Modal.hide();
