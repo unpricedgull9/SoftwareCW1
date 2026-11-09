@@ -3,6 +3,8 @@ class DrinkDispenser {
   // OLIVER modal works well, but the stock doesnt update and you might need to try and test it through console
   static dispenseDrink(drinkName) {
     TransactionTimer.clearTimer();
+    const selectionInput = document.getElementById("input-drink-id");
+    selectionInput.value = null;
     Modal.show(
       "Dispensing Drink",
       `<div class="modal-terminal">

@@ -41,6 +41,8 @@ class ChangeDispenser {
 
       console.log(`Dispensing change: £${value.toFixed(2)}`);
     } else if (type === "rejected") {
+      const selectionInput = document.getElementById("input-drink-id");
+      selectionInput.value = null;
       Modal.show(
         "Invalid Cash",
         `<div class="modal-terminal">The cash you inserted (£${value.toFixed(2)}) has been <b style='color: red;'>rejected</b> for being damaged or fake.</div>`,
