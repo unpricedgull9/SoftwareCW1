@@ -11,8 +11,8 @@ class WeightSensor {
     {
       id: "001",
       name: "Latte",
-      weight: 3500,
-      fakeStock: 10,
+      weight: 350,
+      fakeStock: 1,
       individualWeight: 350,
     },
     {

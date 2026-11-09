@@ -7,7 +7,8 @@ class Modal {
     const modalContent = document.getElementById("modal-content");
     const modalCancelBtn = document.getElementById("modal-red");
     const modalConfirmBtn = document.getElementById("modal-green");
-    const modalMsg = document.getElementById("modal-msg");
+
+    this.hideMessage();
 
     // builds the modal
     modalHeader.textContent = header;
@@ -43,6 +44,7 @@ class Modal {
 
   static hideMessage() {
     const modalMsg = document.getElementById("modal-msg");
+    modalMsg.textContent = "";
     modalMsg.hidden = true;
   }
 }

@@ -70,7 +70,12 @@ class CashReceiver {
             Modal.message(
               "* Error: Machine cannot give exact change. Transaction cancelled.",
             );
-            Logger.log("Error", "Not enough change", value);
+            Logger.log("Error", "Not enough change", changeNeeded);
+            // const cancelBtn = document.getElementById("modal-red");
+            // cancelBtn.onclick(() => {
+            //   Modal.message("");
+            //   Modal.hideMessage();
+            // });
             return;
           } else {
             ChangeDispenser.dispenseCash(
@@ -79,13 +84,23 @@ class CashReceiver {
               changeResult.change,
               () => DrinkDispenser.dispenseDrink(drinkName),
             );
-            Logger.log("Purchase", `${drinkName} (${drinkId}) (Change: £${changeNeeded.toFixed(2)})`, PaymentModule.currentPrice, "Cash");
+            Logger.log(
+              "Purchase",
+              `${drinkName} (${drinkId}) (Change: £${changeNeeded.toFixed(2)})`,
+              PaymentModule.currentPrice,
+              "Cash",
+            );
             return;
           }
         }
 
         // this does get called on
-        Logger.log("Purchase", `${drinkName} (${drinkId})`, PaymentModule.currentPrice, "Cash");
+        Logger.log(
+          "Purchase",
+          `${drinkName} (${drinkId})`,
+          PaymentModule.currentPrice,
+          "Cash",
+        );
         DrinkDispenser.dispenseDrink(drinkName);
       } else {
         Modal.hide();
