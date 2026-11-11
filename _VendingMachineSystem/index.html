@@ -1,292 +1,163 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="stylesheet" href="style.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home - Edge Hill Drinks Vending Machine</title>
-  </head>
-  <body>
-    <!-- Modal -->
-    <div class="modal" hidden>
-      <div class="modal-body menu-item">
-        <h2 id="modal-header"></h2>
-        <div id="modal-content"></div>
-        <div id="modal-btns">
-          <button id="modal-green" class="green-btn">Confirm</button>
-          <button id="modal-red" class="red-btn" hidden>Cancel</button>
-        </div>
-        <p id="modal-msg" class="msg" hidden></p>
-      </div>
-    </div>
-    <!-- Header -->
-    <header id="title-bar"><h1>Edge Hill Drinks Vending Machine</h1></header>
-    <!-- Main Menu -->
-    <main id="main-menu">
-      <!-- Drinks Panel -->
-      <div class="menu-item" id="drinks-panel">
-        <h2>Drinks</h2>
-        <table>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Stock</th>
-          </tr>
-          <tr>
-            <td>001</td>
-            <td>Espresso</td>
-            <td>£1.50</td>
-            <td>10</td>
-          </tr>
-        </table>
-      </div>
-      <!-- Payment Panel -->
-      <div class="menu-item" id="payment-panel">
-        <h2>Selected</h2>
-        <p id="sel-drink-id">ID: N/A</p>
-        <p id="sel-drink-name">Drink: N/A</p>
-        <p id="sel-drink-price">Price: £N/A</p>
-        <input type="number" id="input-drink-id" placeholder="Enter Drink ID" />
-        <p id="sel-msg" class="msg" hidden></p>
-        <button id="cash-btn" class="green-btn">Pay with Cash</button>
-        <button id="card-btn" class="blue-btn">Pay with Card</button>
-      </div>
-      <!-- Admin Panel -->
-      <div class="menu-item" id="admin-panel">
-        <h2>Admin Panel</h2>
-        <input
-          type="password"
-          id="input-admin-pass"
-          placeholder="Enter Admin PIN"
-        />
-        <p id="admin-msg" class="msg" hidden></p>
-        <button
-          id="admin-btn"
-          class="yellow-btn"
-          onclick="controller.checkAdminPass()"
-        >
-          Submit
+
+<head>
+  <!-- Document Head And Metadata -->
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="styles/style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home - Edge Hill Drinks Vending Machine</title>
+</head>
+
+<body>
+  <!-- Modal Overlay Container -->
+  <div class="modal" hidden>
+    <!-- Modal Inner Body -->
+    <div class="modal-body menu-item">
+      <h2 id="modal-header"></h2>
+      <div id="modal-content"></div>
+      <!-- Modal Action Buttons -->
+      <div id="modal-btns">
+        <button id="modal-green" class="green-btn" style="margin-bottom: 1rem">
+          Confirm
         </button>
-        <div class="admin-btns" hidden>
-          <button id="restock-drink-btn" class="blue-btn">
-            Restock Drinks
-          </button>
-          <button id="view-log-btn" class="purple-btn">View Log</button>
-          <button id="view-cash-btn" class="green-btn">View Cash</button>
-        </div>
+        <button id="modal-red" class="red-btn" onclick="Modal.hide()" hidden>
+          Cancel
+        </button>
       </div>
-      <!-- Loyalty Panel -->
-      <div class="menu-item" id="loyalty-panel">
-        <h2>Loyalty Card</h2>
-        <input
-          type="text"
-          id="input-loyalty-id"
-          placeholder="Enter Loyalty ID"
-        />
-        <p id="loyalty-msg" class="msg" hidden></p>
-        <button id="loyalty-btn" class="green-btn">Submit</button>
-      </div>
-    </main>
-  </body>
-</html>
-<script>
-  const CASH_DATA = [
-    { "type": "£10", "worth": 10, "quantity": 5 },
-    { "type": "£5", "worth": 5, "quantity": 10 },
-    { "type": "£2", "worth": 2, "quantity": 20 },
-    { "type": "£1", "worth": 1, "quantity": 30 },
-    { "type": "50p", "worth": 0.5, "quantity": 40 },
-    { "type": "20p", "worth": 0.2, "quantity": 50 },
-    { "type": "10p", "worth": 0.1, "quantity": 60 }
-  ];
+      <p id="modal-msg" class="msg" hidden></p>
+    </div>
+  </div>
 
-  const STOCK_DATA = [
-  {
-    "id": "000",
-    "name": "Espresso",
-    "price": 1.50,
-    "quantity": 5
-  },
-  {
-    "id": "001",
-    "name": "Latte",
-    "price": 2.20,
-    "quantity": 8
-  },
-  {
-    "id": "003",
-    "name": "Hot Chocolate",
-    "price": 2.00,
-    "quantity": 3
-  },
-  {
-    "id": "004",
-    "name": "Bottled Water",
-    "price": 1.00,
-    "quantity": 10
-  }
-]
+  <!-- Header Title Bar Section -->
+  <header id="title-bar">
+    <h1>Edge Hill Drinks Vending Machine</h1>
+  </header>
 
-  // Drink class
-  class Drink {
-    constructor(id, name, price, stock) {
-      this.id = id;
-      this.name = name;
-      this.price = price;
-      this.stock = stock;
-    }
-  }
-
-  // Core Components
-
-  class VendingController {
-    // Populates drinks array with drinks from data
-    constructor() {
-      this.drinks = [];
-      this.selectedDrink = null;
-
-      STOCK_DATA.forEach(stockDrink => {
-        this.drinks.push(new Drink(
-          stockDrink["id"], 
-          stockDrink["name"], 
-          stockDrink["price"], 
-          stockDrink["quantity"]
-        ));
-      });
-    }
-
-    // The # means a var is private
-    #adminPass = "1234";
-
-    // Handles admin password entry
-    checkAdminPass() {
-      const adminPassInput = document.getElementById("input-admin-pass");
-      const adminMsg = document.getElementById("admin-msg");
-      const adminBtns = document.querySelector(".admin-btns");
-
-      const enteredPass = adminPassInput.value;
-      if (enteredPass === this.#adminPass) {
-        adminMsg.hidden = true;
-        adminBtns.hidden = false;
-        adminBtns.style.display = "flex";
-      } else {
-        adminMsg.textContent = "*Incorrect PIN. Please try again.";
-        adminMsg.hidden = false;
-        adminBtns.hidden = true;
-        adminBtns.style.display = "none";
-      }
-    }
-
-    // Handles creating and updating the drinks table with drinks from the drinks array
-    renderDrinksTable() {
-      const table = document.querySelector("#drinks-panel table");
-      if (!table) return;
-
-      let html = `
+  <!-- Main Menu Interface Section -->
+  <main id="main-menu">
+    <!-- Drinks Inventory Panel -->
+    <div class="menu-item" id="drinks-panel">
+      <h2>Drinks</h2>
+      <table>
         <tr>
           <th>ID</th>
           <th>Name</th>
           <th>Price</th>
           <th>Stock</th>
         </tr>
-      `;
+      </table>
+    </div>
 
-      this.drinks.forEach(drink => {
-        // toFixed(2) fixes price at 2 decimal places
-        html += `
-          <tr>
-            <td>${drink.id}</td>
-            <td>${drink.name}</td>
-            <td>£${drink.price.toFixed(2)}</td>
-            <td>${drink.stock}</td>
-          </tr>
-        `;
-      });
+    <!-- Payment Processing Panel -->
+    <div class="menu-item" id="payment-panel">
+      <h2>Selected</h2>
+      <p id="sel-drink-id">ID: N/A</p>
+      <p id="sel-drink-name">Drink: N/A</p>
+      <p id="sel-drink-price">Price: £N/A</p>
+      <input type="number" id="input-drink-id" placeholder="Enter Drink ID" />
+      <p id="sel-msg" class="msg" hidden></p>
+      <button id="cash-btn" class="green-btn">Pay with Cash</button>
+      <button id="card-btn" class="blue-btn">Pay with Card</button>
+    </div>
 
-      table.innerHTML = html;
-    }
+    <!-- Administrator Controls Panel -->
+    <div class="menu-item" id="admin-panel">
+      <h2>Admin Panel</h2>
+      <input type="password" id="input-admin-pass" placeholder="Enter Admin PIN" />
+      <p id="admin-msg" class="msg" hidden></p>
+      <button id="admin-btn" class="yellow-btn" onclick="controller.checkAdminPass()">
+        Submit
+      </button>
+      <div class="admin-btns" hidden>
+        <button id="restock-drink-btn" class="blue-btn" onclick="Admin.restockDrinks(5)">
+          Restock Drinks (5)
+        </button>
+        <button id="view-log-btn" class="purple-btn" onclick="Admin.viewLog()">View Log</button>
+        <button id="view-cash-btn" class="green-btn" onclick="Admin.viewCash()">View Cash</button>
+      </div>
+    </div>
 
-    // Handling for selecting drinks via id
-    selectDrink(id) {
-      const msgElement = document.getElementById("sel-msg");
-      const idDisplay = document.getElementById("sel-drink-id");
-      const nameDisplay = document.getElementById("sel-drink-name");
-      const priceDisplay = document.getElementById("sel-drink-price");
+    <!-- Customer Loyalty Card Panel -->
+    <div class="menu-item" id="loyalty-panel">
+      <h2>Loyalty Card</h2>
+      <input type="text" id="input-loyalty-id" placeholder="Enter Loyalty ID" />
+      <p id="loyalty-msg" class="msg" hidden></p>
+      <button id="loyalty-btn" class="green-btn">Submit</button>
+    </div>
+  </main>
+  <!-- Vending Machine Scripts -->
+  <script src="scripts/Admin.js"></script>
+  <script src="scripts/BankService.js"></script>
+  <script src="scripts/PaymentMethod.js"></script>
+  <script src="scripts/CardReader.js"></script>
+  <script src="scripts/CashReceiver.js"></script>
+  <script src="scripts/CashSensor.js"></script>
+  <script src="scripts/CashValidator.js"></script>
+  <script src="scripts/ChangeDispenser.js"></script>
+  <script src="scripts/Drink.js"></script>
+  <script src="scripts/DrinkDispenser.js"></script>
+  <script src="scripts/Logger.js"></script>
+  <script src="scripts/LoyaltyScanner.js"></script>
+  <script src="scripts/Modal.js"></script>
+  <script src="scripts/PaymentModule.js"></script>
+  <script src="scripts/StockSensor.js"></script>
+  <script src="scripts/TransactionRecord.js"></script>
+  <script src="scripts/TransactionTimer.js"></script>
+  <script src="scripts/VendingController.js"></script>
+  <script src="scripts/WeightSensor.js"></script>
+  <script>
+    // Application Initialization 
+    const controller = new VendingController();
+    controller.renderDrinksTable();
 
-      // Trim whitespace from input
-      const trimmedId = id.toString().trim();
+    // Event Listeners Registration 
+    const idField = document.getElementById("input-drink-id");
+    idField.addEventListener("input", (e) => {
+      controller.selectDrink(e.target.value);
+    });
 
-      const drink = this.drinks.find(d => d.id === trimmedId);
-
-      // Handle invalid id input
-      if (!drink) {
-        msgElement.textContent = "*Error: Invalid Drink ID.";
-        msgElement.hidden = false;
-        this.clearSelectionDisplay();
-        return;
+    const adminPassInput = document.getElementById("input-admin-pass");
+    adminPassInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        controller.checkAdminPass();
       }
+    });
 
-      // Move this function over to StockSensor later
-      if (drink.quantity <= 0) {
-        msgElement.textContent = `*Error: ${drink.name} is out of stock.`;
-        msgElement.hidden = false;
-        this.clearSelectionDisplay();
-        return;
+    const loyaltyIdInput = document.getElementById("input-loyalty-id");
+    loyaltyIdInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        LoyaltyScanner.checkLoyaltyId();
       }
+    });
 
-      this.selectedDrink = drink;
-      msgElement.hidden = true;
+    const loyaltyBtn = document.getElementById("loyalty-btn");
+    loyaltyBtn.addEventListener("click", () => {
+      LoyaltyScanner.checkLoyaltyId();
+    });
 
-      idDisplay.textContent = `ID: ${drink.id}`;
-      nameDisplay.textContent = `Drink: ${drink.name}`;
-      priceDisplay.textContent = `Price: £${drink.price.toFixed(2)}`;
-    }
+    const cashBtn = document.getElementById("cash-btn");
+    cashBtn.addEventListener("click", () => {
+      if (controller.selectedDrink) {
+        PaymentMethod.open(CashReceiver);
+      } else {
+        VendingController.updateSelectionMessage(
+          "Please select a drink first.",
+        );
+      }
+    });
 
-    // Clears the drink selection
-    clearSelectionDisplay() {
-      this.selectedDrink = null;
-      document.getElementById("sel-drink-id").textContent = "ID: N/A";
-      document.getElementById("sel-drink-name").textContent = "Drink: N/A";
-      document.getElementById("sel-drink-price").textContent = "Price: £N/A";
-    }
-  }
+    const cardBtn = document.getElementById("card-btn");
+    cardBtn.addEventListener("click", () => {
+      if (controller.selectedDrink) {
+        PaymentMethod.open(CardReader);
+      } else {
+        VendingController.updateSelectionMessage(
+          "Please select a drink first.",
+        );
+      }
+    });
+  </script>
+</body>
 
-  class PaymentModule {}
-
-  class CashReceiver {}
-
-  class CardReader {}
-
-  class LoyaltyScanner {}
-
-  class BankService {}
-
-  class DrinkDispenser {}
-
-  // Optional Extension Components
-
-  class CashValidator {}
-
-  class CashSensor {}
-
-  class StockSensor {}
-
-  class WeightSensor {}
-
-  class TransactionTimer {}
-
-  class ChangeDispenser {}
-
-  class Logger {}
-
-  class TransactionRecord {}
-
-  const controller = new VendingController();
-
-  controller.renderDrinksTable();
-
-  document.getElementById("input-drink-id").addEventListener("change", (e) => {
-    controller.selectDrink(e.target.value);
-  });
-</script>
+</html>
