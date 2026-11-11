@@ -24,5 +24,6 @@ This browser-based prototype of a drinks machine was created for CIS2722 Coursew
 
 # How to Use
 1. Download attached file _or clone repo_.
-2. Open `VendingMachineSystem/index.html` using a browser.
-3. Finally, enjoy using the prototype vending machine system system!
+2. Unzip the downloaded file `VendingMachineSystem_v1.0.0-alpha.zip`.
+3. Open `VendingMachineSystem/index.html` using a browser.
+4. Finally, enjoy using the prototype vending machine system system!
